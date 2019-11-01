@@ -1,0 +1,245 @@
+---
+title: 'R Genomics: Factors and Data frames'
+output:
+  html_document:
+    df_print: paged
+editor_options:
+  chunk_output_type: inline
+---
+
+
+# R Basics continued - factors and data frames
+
+Working with spreadsheets (tabular data)
+
+Importing tabular data into R
+
+There are several ways to import data into R. 
+
+For our purpose here, we will focus on using the tools every R installation comes with (so called “base” R) 
+
+to import a comma-delimited file containing the results of our variant calling workflow. 
+
+We will need to load the sheet using a function called `read.csv()`.
+
+```{r read_csv}
+?read.csv()
+```
+
+
+
+Now let’s read in the file combined_tidy_vcf.csv 
+
+```{r read_in_data}
+# read in a CSV file and save it as 'variants'
+variants <- read.csv(file.path("rawdata","combined_tidy_vcf.csv"))
+```
+
+Use View() function to bring up inbuilt data frame viewer
+
+```{r view_data}
+View(variants)
+```
+
+## Summarizing and determining the structure of a data frame.
+
+A data frame is the standard way in R to store tabular data. 
+
+A data fame could also be thought of as a collection of vectors, all of which have the same length. 
+
+Using only two functions, we can learn a lot about out data frame  including some summary statistics as well as well as the “structure” of the data frame. 
+
+Let’s examine what each of these functions can tell us:
+
+Use `summary()` function on variants data frame
+
+```{r summarise}
+summary(variants)
+```
+
+Before we operate on the data, we also need to know a little more about the data frame structure 
+to do that we use the `str()` function:
+
+Use `str()` function on the variants data frame.
+
+```{r str}
+str(variants)
+```
+
+A really usefull function is `skim()` from the [skimr](https://cran.r-project.org/web/packages/skimr/index.html) package 
+
+```{r}
+skimr::skim(variants)
+```
+
+You will see that one of columns/vectors that make up the variants data frame is a new type of data structure `fct`.
+
+## Introducing Factors
+
+Factors are the final major data structure we will introduce in our R genomics lessons. 
+
+Factors can be thought of as vectors which are specialized for categorical data.
+
+subset the fct column REF to a new object using `$` 
+
+```{r}
+REF <- variants$REF
+```
+
+Let’s look at the first few items in our factor using `head()`:
+
+```{r head}
+head(REF)
+str(REF)
+```
+
+# Plotting
+
+One of the most common uses for factors will be when you plot categorical values. 
+
+For example, suppose we want to know how many of our variants had each possible nucleotide 
+
+(or nucleotide combination) in the reference genome? We could generate a plot:
+
+Plot REF using the `plot()` function
+
+```{r plotting}
+plot(REF)
+```
+
+If you are using factors you should use the forcats package that has really useful functions to manage factors.
+Extra (forcats )[https://forcats.tidyverse.org/]
+
+```{r forcats}
+plot(forcats::fct_lump(REF,n=5))
+#
+plot(forcats::fct_infreq(forcats::fct_lump(REF,n=5)))
+```
+
+
+Back to data frames
+
+## Subsetting data frames
+
+Next, we are going to talk about how you can get specific values from data frames.
+
+The subsetting notation is very similar to what we learned for vectors. 
+
+The key differences include:
+
+* Typically provide two values separated by commas: `data.frame[row, column]`
+
+
+Subset the first row and column of variants data frame.
+
+```{r}
+variants[1,1]
+```
+
+In cases where you are taking a continuous range of numbers use a colon between the numbers (start:stop, inclusive)
+
+Subset the first row and column of variants data frame.
+
+```{r}
+variants[1:5,1:5]
+```
+
+
+For a non continuous set of numbers, pass a vector using c()
+variants[c(1,4,9),1:5]
+
+Index using the name of a column(s) by passing them as vectors using c()
+variants[1:5,c("POS")]
+
+Finally, in all of the subsetting exercises above, we printed values to the screen. 
+You can create a new data frame object by assigning them to a new object name
+
+Create a new data frame from variants object containing only observations from sample_id SRR2584863 
+
+```{r create_new_df}
+SRR2584863_variants <-variants[variants$sample_id=="SRR2584863",]
+```
+
+Check the dimension of the data frame `dim()` `nrow()` and `ncol()`
+
+```{r data_frame_dimensions}
+dim(SRR2584863_variants)
+```
+
+## get a summary of the data frame `summary()`
+
+```{r data_frame_summary}
+summary(SRR2584863_variants)
+```
+
+
+
+##  Math, sorting, renaming on data frames
+
+You can use functions like 
+
+`mean()`
+`min()`
+`max()`
+
+on an individual column.
+
+Find maximum depth, DP, of all variants
+
+```{r max_depth}
+max(variants$DP)
+```
+
+
+You can sort a data frame using the  `order()` function:
+
+Sort variants data frame by DP
+
+```{r sort_data_frame}
+sorted_by_DP <- variants[order(variants$DP), ]
+head(sorted_by_DP$DP)
+```
+
+
+
+You can rename columns: `colnames()`
+
+Rename column  sample_id to strain
+  
+```{r rename_columns}
+colnames(variants)[colnames(variants) == "sample_id"] <- "strain"
+```
+
+
+Check the column name.
+
+```{r colnames}
+colnames(variants)
+```
+
+
+
+
+## Saving your data frame to a file
+
+* `write.csv()`
+* `file.path()`
+
+```{r write_csv}
+write.csv(x = SRR2584863_variants, file = file.path("../","data","SRR2584863_variants.csv"))
+```
+
+
+## Key Points
+
+* It is easy to import data into R from tabular formats 
+However, you still need to check that R has imported and interpreted your data correctly
+
+* There are best practices for organizing your data (keeping it tidy) and R is great for this
+
+* Base R has many useful functions for manipulating your data, 
+but all of R’s capabilities are greatly enhanced by software packages developed by the community
+
+## Exercises 
+
+Swirl exercises data frames and factors

@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1572599832567.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2690440139",
+    "id" : "E401B1F9",
+    "lastKnownWriteTime" : 1572599960,
+    "last_content_update" : 1572599960910,
+    "path" : "~/Documents/r_genomics/rawdata/input",
+    "project_path" : "rawdata/input",
+    "properties" : {
+        "cursorPosition" : "17,8",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "text"
+}

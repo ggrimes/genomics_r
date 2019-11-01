@@ -1,0 +1,306 @@
+---
+title: 'R Genomics: Aggregating and Analyzing Data with dplyr'
+output:
+  html_document:
+    df_print: paged
+editor_options:
+  chunk_output_type: inline
+---
+
+[Aggregating and Analyzing Data with dplyr](https://datacarpentry.org/genomics-r-intro/04-dplyr/index.html)
+
+
+## Questions
+
+* How can I manipulate dataframes without repeating myself?
+
+## Objectives
+
+* Describe what the dplyr package in R is used for.
+
+* Apply common dplyr functions to manipulate data in R.
+
+* Employ the ‘pipe’ operator to link together a sequence of functions.
+
+* Employ the ‘mutate’ function to apply other chosen functions to existing columns and create new columns of data.
+
+* Employ the ‘split-apply-combine’ concept to split the data into groups, apply analysis to each group, and combine the results.
+
+
+# dplyr
+
+Bracket `[]` subsetting is handy, but it can be cumbersome and difficult to read, especially for complicated operations.
+
+Luckily, the [dplyr](https://cran.r-project.org/package=dplyr) package provides a number of very useful functions for manipulating dataframes in a way that will reduce repetition, reduce the probability of making errors, and probably even save you some typing. 
+
+As an added bonus, you might even find the dplyr grammar easier to read.
+
+Here we’re going to cover 6 of the most commonly used functions as well as using pipes (%>%) to combine them.
+
+* `select()`
+* `filter()`
+* `group_by()`
+* `summarize()`
+* `mutate()`
+
+Packages in R are sets of additional functions that let you do more stuff in R. 
+
+The functions we’ve been using, like `str()`, come built into R; packages give you access to more functions. 
+
+You need to install a package and then load it to be able to use it
+
+```{r install_dplyr}
+#install.packages("dplyr") ## install
+library("dplyr")          ## load
+```
+
+
+Read in combined_tidy_vcf.csv using argument `stringsAsFactors = FALSE`
+
+```{r read_csv_stringsAsFctfalse}
+variants_tbl <-read.csv(file.path("rawdata","combined_tidy_vcf.csv"),stringsAsFactors = FALSE)
+```
+
+
+
+
+# Selecting columns and filtering rows
+
+select sample_id, REF, ALT, DP from varaints df
+
+```{r dplyr_select}
+select(variants_tbl, sample_id, REF, ALT, DP)
+```
+
+To select all columns except certain ones, put a “-“ in front of the variable to exclude it.
+
+select all but CHROM column
+
+```{r dplyr_select_negate}
+select(variants_tbl, -CHROM)
+```
+
+dplyr also provides useful functions to select columns based on their names. For instance, ends_with()
+
+select columns that end with B
+
+```{r dplyr_ends_with}
+select(variants_tbl, ends_with("B"))
+```
+
+## dplyr filtering
+
+To choose rows, we can use filter(). 
+For instance, to keep the rows for the sample_id SRR2584863:
+
+```{r dplyr_filter}
+filter(variants_tbl,sample_id=="SRR2584863")
+
+```
+
+Note that this is equivalent to the base R code below, but is easier to read!
+```{r r_base_filter}
+variants_tbl[variants_tbl$sample_id == "SRR2584863",]
+```
+
+
+filter() will keep all the rows that match the conditions that are provided. 
+
+Here are a few examples:
+
+```{r dplyr_filter_examples}
+## rows for which the reference genome has T or G 
+filter(variants_tbl, REF %in% c("T", "G")) 
+
+## rows with QUAL values greater than or equal to 100
+filter(variants_tbl, QUAL >= 100)
+
+## rows that have TRUE in the column INDEL
+filter(variants_tbl,INDEL==TRUE)
+```
+
+
+
+
+## Pipes
+
+But what if you wanted to select and filter? 
+
+We can do this with pipes. 
+
+Pipes, are a fairly recent addition to R. 
+
+Pipes let you take the output of one function and send it directly to the next, which is useful when you need to many things to the same data set. 
+
+It was possible to do this before pipes were added to R, but it was much messier and more difficult. 
+
+Pipes in R look like %>% and are made available via the magrittr package, which is installed as part of dplyr. 
+
+If you use RStudio, you can type the pipe with Ctrl + Shift + M if you’re using a PC, or Cmd + Shift + M if you’re using a Mac.
+
+
+Use pipes together with select and filter to get REF, ALT, DP columns for sample_id SRR2584863
+
+```{r pipe_example}
+variants_tbl %>%
+  filter(sample_id == "SRR2584863") %>%
+  select(REF, ALT, DP)
+```
+
+
+
+
+
+we want to create a new object with this smaller version of the data we can do so by assigning it a new name:
+
+```{r pipe_example_new_variable}
+SRR2584863_variants <- variants_tbl %>%
+  filter(sample_id == "SRR2584863") %>%
+  select(REF, ALT, DP)
+SRR2584863_variants
+```
+
+
+
+
+
+###########Exercise##################
+#Starting with the variants dataframe, 
+#use pipes to subset the data to include only observations from SRR2584863 sample, 
+#where the filtered depth (DP) is at least 10. Retain only the columns REF, ALT, and POS.
+###########Exercise##################
+
+
+## Adding a column, Mutate
+
+We have a column titled “QUAL”. 
+
+This is a Phred-scaled confidence score that a polymorphism exists at this position given the sequencing data. 
+
+Lower QUAL scores indicate low probability of a polymorphism existing at that site.
+
+We can convert the confidence value QUAL to a probability value according to the formula:
+  
+Probability = 1- 10 ^ -(QUAL/10)
+
+Let’s add a column (POLPROB) to our variants dataframe that shows the probability of a polymorphism at that site given the data. 
+
+
+
+```{r adding_a_column_using_dplyr}
+variants_tbl %>%
+  mutate(POLPROB = 1 - (10 ^ -(QUAL/10)))
+```
+
+
+############Exercise##################
+#There are a lot of columns in our dataset, so let’s just look at the sample_id, POS, QUAL, and POLPROB columns for now.
+#Add a line to the above code to only show those columns.
+#####################################
+
+Let’s create a new column, called “indel_size” that contains the size difference between the our sequences and the reference genome. 
+The function, nchar() returns the number of letters in a string.
+
+```{r}
+variants_tbl %>%
+  mutate(indel_size = nchar(ALT) - nchar(REF)) %>% 
+  select(ALT,REF,indel_size)
+```
+```{r variants_indel}
+variants_indel <- variants_tbl %>%
+  mutate(
+    indel_size = nchar(ALT) - nchar(REF),
+    mutation_type = case_when(
+      indel_size > 0 ~ "insertion",
+      indel_size < 0 ~ "deletion",
+      indel_size == 0 ~ "point"
+    ))
+```
+
+
+
+
+## Split-apply-combine data analysis and the summarize() function
+
+Many data analysis tasks can be approached using the “split-apply-combine” paradigm: 
+
+split the data into groups, 
+ apply some analysis to each group, 
+  and then combine the results. dplyr makes 
+
+this very easy through the use of the 
+
+group_by() function, which splits the data into groups. 
+
+When the data is grouped in this way summarize() can be used to collapse each group into a single-row summary. 
+
+summarize() does this by applying an aggregating or summary function to each group.
+
+# For example, if we wanted to group variants_indel by mutation_type and find the average size for the insertions and deletions:
+
+```{r group_by}
+variants_indel %>% 
+  group_by(mutation_type) %>% 
+  summarise(mean_size = mean(indel_size))
+```
+
+
+View the lowest and highest filtered depth (DP) for each sample using group_by and summarize:
+
+```{r high_low_DP}
+variants_indel %>%
+  group_by(sample_id) %>%
+  summarize(min(DP),max(DP))
+```
+
+
+It is often useful to calculate how many observations are present in each group. The function n() helps you do that:
+
+Count how many mutations there are for each mutation_type
+
+```{r n_function}
+variants_indel %>%
+  group_by(mutation_type) %>%
+  summarize(n = n())
+```
+
+Because it’s a common operation, the dplyr verb, count() is a “shortcut” that combines these 2 commands:
+
+```{r dplyr_count}
+variants_indel %>%
+  count(mutation_type)
+
+```
+
+group_by() (and therfore count()) can also take multiple column names.
+
+How many mutations are found in each sample?
+
+```{r}
+variants_indel %>% 
+  count(mutation_type,sample_id)
+```
+
+
+## Exporting
+
+We can export this new dataset using write_csv():
+
+write object variants_indel to a csv file in the data directory
+
+```{r write_csv}
+  getwd()
+  write.csv(variants_indel, file.path("../","data","variants_indel.csv"))
+```
+
+## Key Points
+
+* Use the dplyr package to manipulate dataframes.
+
+* Use select() to choose variables from a dataframe.
+
+* Use filter() to choose data based on values.
+
+* Use group_by() and summarize() to work with subsets of data.
+
+* Use mutate() to create new variables.

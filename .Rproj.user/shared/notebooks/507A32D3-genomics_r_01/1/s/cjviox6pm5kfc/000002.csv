@@ -1,0 +1,5 @@
+"0","#Some interesting human SNPs"
+"0","#while accuracy is important, typos in the data won't hurt you here"
+"0","#snps <- c('rs53576', 'rs1815739', 'rs6152', 'rs1799971')"
+"0","#snp_chromosomes <- c('3', '11', 'X', '6')"
+"0","#snp_positions <- c(8762685, 66560624, 67545785, 154039662)"

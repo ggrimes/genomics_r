@@ -1,0 +1,27 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1572601451163.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "134|6|136|0|\n142|6|144|0|\n158|20|160|0|\n164|28|166|0|\n188|16|190|0|\n197|22|200|0|\n208|21|210|0|\n215|15|217|0|\n",
+    "hash" : "4276188565",
+    "id" : "879F6CCA",
+    "lastKnownWriteTime" : 1572609769,
+    "last_content_update" : 1572609769847,
+    "path" : "~/Documents/r_genomics/R/genomics_r_02.Rmd",
+    "project_path" : "R/genomics_r_02.Rmd",
+    "properties" : {
+        "chunk_output_type" : "inline",
+        "cursorPosition" : "231,0",
+        "scrollLine" : "219",
+        "tempName" : "Untitled1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 6,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

@@ -1,0 +1,3 @@
+"0","variants_indel %>%"
+"0","  group_by(sample_id) %>%"
+"0","  summarize(min(DP),max(DP))"

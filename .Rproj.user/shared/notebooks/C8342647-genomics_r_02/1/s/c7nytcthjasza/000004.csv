@@ -1,0 +1,6 @@
+"0","# read in a CSV file and save it as 'variants'
+variants <- read.csv(file.path(""rawdata"",""combined_tidy_vcf.csv""))
+"
+"2","cannot open file 'rawdata/combined_tidy_vcf.csv': No such file or directory"
+"2","Error in file(file, ""rt"") : cannot open the connection
+"

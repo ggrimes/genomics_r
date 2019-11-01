@@ -1,0 +1,8 @@
+"0","variants_indel <- variants_tbl %>%"
+"0","  mutate("
+"0","    indel_size = nchar(ALT) - nchar(REF),"
+"0","    mutation_type = case_when("
+"0","      indel_size > 0 ~ ""insertion"","
+"0","      indel_size < 0 ~ ""deletion"","
+"0","      indel_size == 0 ~ ""point"""
+"0","    ))"

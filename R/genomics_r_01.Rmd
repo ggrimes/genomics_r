@@ -1,0 +1,442 @@
+---
+title: "R Genomics: RStudio and R Basics"
+output:
+  html_document:
+    df_print: paged
+editor_options:
+  chunk_output_type: inline
+---
+
+# Introducing R and RStudio IDE
+
+
+## Getting to work with R: navigating directories
+
+Find out where you are using `getwd()`
+
+```{r where_am_i}
+getwd()
+```
+
+
+
+[Organize your data and code](https://kbroman.org/steps2rr/pages/organize.html)
+
+Use function `dir.create()` to create the directories
+
+* R
+* data
+* rawdata
+ 
+```{r create_dir}
+
+```
+
+
+## Download raw data file
+
+Use function `download.file()` to download the file
+
+https://ndownloader.figshare.com/files/14632895 to rawdata/combined_tidy_vcf.csv
+
+```{r download_data}
+download.file(url = "https://ndownloader.figshare.com/files/14632895",destfile = "rawdata/combined_tidy_vcf.csv")
+```
+
+
+## Using functions in R, without needing to master them
+
+`?`
+`args()`
+
+```{r getting_help}
+?getwd()
+args(round)
+```
+
+
+
+## RStudio contextual help
+
+start typing function `round()` and use tab
+
+```{r rstudio_help}
+# ?round()
+# round(3.14)
+# round(3.14,1)
+```
+
+
+# R Basics
+
+
+* Be able to create the most common R objects including vectors
+
+* Understand that vectors have modes, which correspond to the type of data they contain
+
+* Be able to use arithmetic operators on R objects
+
+* Be able to retrieve (subset), name, or replace, values from a vector
+
+* Be able to use logical operators in a subsetting operation
+
+* Understand that lists can hold data of more than one mode and can be indexed
+
+
+## Creating objects in R
+
+This line creates the object 'a' and assigns it the value '1'
+
+`<-`
+`->`
+`=`
+
+```{r}
+a <-1
+1 -> a
+a=1
+a
+```
+
+
+
+## Understanding object data types (modes)
+
+In R, every object has two properties:
+
+* Length: How many distinct values are held in that object
+
+* Mode: What is the classification (type) of that object.
+
+We will get to the “length” property later in the lesson. 
+
+The “mode” property corresponds to the type of data an object represents. 
+
+The most common modes you will encounter in R are:
+ 
+* numeric: Numbers such floating point,decimals (1.0, 0.5, 3.14)
+
+```{r numerics}
+mode(1)
+mode(1.1)
+mode(1e6)
+```
+
+
+* character A sequence of letters ornumbers in single '' or double "" quotes
+
+```{r character}
+mode("a")
+mode('a')
+mode('1')
+```
+
+
+
+* Logical	Boolean values - TRUE or FALSE
+
+```{r logicals}
+mode(FALSE)
+mode(TRUE)
+```
+
+
+
+## Mathematical and functional operations on objects
+
+R has a number of mathematical operators that you can use
+
+ +	addition
+ -	subtraction
+ *	multiplication
+ /	division
+ ^ or **	exponentiation
+ a%%b	modulus (returns the remainder after division)  
+
+These can be used with literal numbers:
+
+```{r mathematical_operations}
+(2^2)/1.5
+```
+
+
+And importantly, can be used on any object that evaluates to (i.e. interpreted by R) a numeric object:
+
+```{r}
+a*100
+```
+
+
+
+## Vectors
+
+Vectors are probably the most used commonly used object type in R. 
+
+A vector is a collection of values that are all of the same type (numbers, characters, etc.). 
+
+One of the most common ways to create a vector is to use the `c()` function - the “concatenate” or “combine” function. 
+
+Inside the function you may enter one or more values; for multiple values, separate each value with a comma:
+
+
+Create the vector snp_genes using these gene names "OXTR", "ACTN3", "AR", "OPRM1"
+
+```{r create_vector}
+snp_genes<-c("OXTR", "ACTN3", "AR", "OPRM1")
+```
+Check the mode and length of the snp_genes object `mode()` and `length()`
+
+```{r mode_and_length}
+mode(snp_genes)
+length(snp_genes)
+```
+
+Another useful function that gives both of these pieces of information is the `str()` (structure) function.
+
+
+```{r str}
+?str()
+str(snp_genes)
+```
+
+
+## Creating and Subsetting vectors
+
+Let’s create a few more vectors to play around with:
+
+* snps  that contains rs53576, rs1815739, rs6152, rs1799971
+
+* snp_chromosomes 3, 11, X, 6
+
+* snp_positions 8762685, 66560624, 67545785, 154039662
+
+
+```{r create_vectors}
+#Some interesting human SNPs
+#while accuracy is important, typos in the data won't hurt you here
+snps <- c('rs53576', 'rs1815739', 'rs6152', 'rs1799971')
+snp_chromosomes <- c('3', '11', 'X', '6')
+snp_positions <- c(8762685, 66560624, 67545785, 154039662)
+```
+
+
+Once we have vectors, one thing we may want to do is specifically retrieve one or more values from our vector. 
+
+To do so, we use bracket notation. 
+
+We type the name of the vector followed by square brackets. `[]`
+
+In those square brackets we place the index (e.g. a number) in that bracket as follows:
+
+In R index start from 1
+
+
+Get the 3rd value in the snp_genes vector
+
+```{r subset_vector_by_index}
+snp_genes[3]
+```
+
+You can also retrieve a range of numbers `:`
+
+```{r number_range}
+1:3
+snp_genes[1:3]
+```
+
+## Adding to, removing, or replacing values in existing vectors
+
+Once you have an existing vector, you may want to add a new item to it. 
+
+To do so, you can use the `c()` function again to add your new value:
+
+Add the gene 'CYP1A1' and 'APOA5' to our list of snp genes.
+
+```{r add_data_to_vector}
+# this overwrites our existing vector
+snp_genes<-c(snp_genes,"CYP1A1","APOA5")
+length(snp_genes)
+```
+
+
+Using a negative index `-` will return a version a vector with that index’s value removed:
+
+Remove the sixth entry from snp_genes vector.
+
+```{r remove_6_idx_from_snp_genes}
+snp_genes
+snp_genes[-6]
+```
+
+
+
+We can remove that value from our vector by overwriting it with this expression:
+
+```{r remove_and_overwrite_6_idx_from_snp_genes}
+snp_genes_bak<-snp_genes
+snp_genes <- snp_genes[-6]
+snp_genes
+```
+
+We can also explicitly rename or add a value to our index using double bracket notation `[]` and assigment operatoor `<-`
+
+```{r vector_add_by_position}
+snp_genes[7]<- "APOA5"
+snp_genes
+```
+
+
+## Logical Subsetting
+
+`TRUE`
+`FALSE`
+
+There is one last set of  subsetting capabilities we want to introduce. 
+
+It is possible within R to retrieve items in a vector based on a logical evaluation or numerical comparison. 
+
+E.g. 
+
+let’s say we wanted get all of the SNPs in our vector of SNP positions that were greater than 100,000,000. 
+
+We could index using the `>` (greater than) logical operator:
+
+
+
+In the square brackets you place the name of the vector followed by the comparison operator and (in this case) a numeric value.
+
+`snp_positions[snp_positions > 100000000]`
+
+Some of the most common logical operators you will use in R are:
+
+
+
+```
+Operator	Description
+<	        less than
+<=	      less than or equal to
+>	        greater than
+>=	      greater than or equal to
+==	      exactly equal to
+!=	      not equal to
+!x	      not x
+a | b	    a or b
+a & b	    a and b
+```
+
+
+Create a Logical vector of snp_positions > 100000000 
+
+```{r create_logical_vector}
+snp_positions
+snp_positions > 100000000
+```
+
+
+Use function `which()` to get index
+
+```{r logical_index}
+which(snp_positions > 100000000)
+```
+
+
+
+## Not Available’ / Missing Values
+
+Finally, there are a few other common retrieve or replace operations you may want to know about. 
+
+First, you can check to see if any of the values of your vector are missing (i.e. are NA). 
+
+The `is.NA()` function will return a logical vector with TRUE for any NA value:
+
+Find NA values value of `snp_genes` vector
+
+```{r na_values}
+snp_genes
+#chr [1:7] "OXTR" "ACTN3" "AR" "OPRM1" "CYP1A1" NA "APOA5"
+is.na(snp_genes)
+```
+
+## %in%
+
+Sometimes, you may wish to find out if a specific value (or several values) is present a vector. 
+
+You can do this using the comparison operator `%in%` 
+
+which will return `TRUE` for any value in your collection that is in the vector you are searching:
+  
+Test to see if "ACTN3" or "APO5A" is in the snp_genes vector
+
+if you are looking for more than one value, you must pass this as a vector
+
+```{r in_operator}
+c("ACTN3","APOA5") %in% snp_genes
+```
+
+
+## Lists
+
+Lists are quite useful in R, but we won’t be using them in the genomics lessons. 
+
+That said, you may come across lists in the way that some bioinformatics programs may store and/or return data to you. 
+
+One of the key attributes of a list is that, unlike a vector, a list may contain data of more than one mode. 
+
+In this one example, we will create a named list and show you how to retrieve items from the list.
+
+Create a named list using the `list()` function and our SNP examples
+
+Note, for easy reading we have placed each item in the list on a separate line
+
+Nothing special about this, you can do this for any multiline commands
+
+To run this command, make sure the entire command (all 4 lines) are highlighted before running.
+
+Note also, as we are doing all this inside the list() function use of the '=' sign is good style
+
+
+```{r create_list}
+snp_genes<-c("OXTR", "ACTN3", "AR", "OPRM1")
+snps <- c('rs53576', 'rs1815739', 'rs6152', 'rs1799971')
+snp_chromosomes <- c('3', '11', 'X', '6')
+snp_positions <- c(8762685, 66560624, 67545785, 154039662)
+
+snp_data <- list(genes = snp_genes,
+                 reference_snp = snps,
+                 chromosome = snp_chromosomes,
+                 position = snp_positions)
+```
+
+## List positions by name `$`
+
+To get all the values for the position object in the list, we use the `$` notation:
+
+Return all the values of position object 
+
+```{r subset_list_by_name}
+#Get position by name $
+snp_data$position
+mode(snp_data$position)
+```
+
+To get the first value in the position object, use the `[]` notation to index:
+
+```{r subset_list_by_name_and_index}
+snp_data$position[1]
+```
+
+
+
+## Key Points
+
+* Effectively using R is a journey of months or years. 
+Still you don’t have to be an expert to use R and you can start using and analyzing your data with with about a day’s worth of training
+
+* It is important to understand how data are organized by R in a given object type and how the mode of that type (e.g. numeric, character, logical, etc.) will determine how R will operate on that data.
+ 
+* Working with vectors effectively prepares you for understanding how data are organized in R.
+```
+
+## Exercises
+
+https://datacarpentry.org/genomics-r-intro/02-r-basics/index.html

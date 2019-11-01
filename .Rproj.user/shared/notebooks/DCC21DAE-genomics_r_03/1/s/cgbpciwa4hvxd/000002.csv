@@ -1,0 +1,5 @@
+"0","  write_csv(variants_indel, file.path(""../"",""data"",""variants_indel.csv""))
+"
+"2","Error in write_csv(variants_indel, file.path(""../"", ""data"", ""variants_indel.csv"")) : 
+  could not find function ""write_csv""
+"

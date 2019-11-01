@@ -1,0 +1,4 @@
+"0","variants_tbl <-read.csv(file.path(""rawdata"",""combined_tidy_vcf.csv""),stringsAsFactors = FALSE)"
+"2","cannot open file 'rawdata/combined_tidy_vcf.csv': No such file or directory"
+"2","Error in file(file, ""rt"") : cannot open the connection
+"

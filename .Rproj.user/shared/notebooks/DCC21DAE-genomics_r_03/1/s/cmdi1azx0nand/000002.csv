@@ -1,0 +1,2 @@
+"0","variants %>%"
+"0","  mutate(POLPROB = 1 - (10 ^ -(QUAL/10)))"
