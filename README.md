@@ -5,7 +5,15 @@ R Programming for biologist
 
 # Setup on Noteable service
 
-
+The R for genomics course will use University Noteable service for course work and it is vital that you check it works before attending the course.
+ 
+https://www.ed.ac.uk/information-services/learning-technology/noteable/accessing-noteable
+ 
+ 
+You will need to use the direct login account for the course. This uses your university username (uun) and password.
+ 
+https://noteable.edina.ac.uk/launch/
+ 
 
 ## Download swirl package 
 
