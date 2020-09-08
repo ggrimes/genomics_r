@@ -35,7 +35,7 @@ Upload packages and swc files to noteable service.
 Within RStudio run
 
 ```
-install.packages("r/swirl_2.4.5.tar.gz",repos=NULL)
+install.packages("swirl/swirl_2.4.5.tar.gz",repos=NULL)
 library("swirl")
-install_course() #select .swc files
+install_course(swc_path = "swirl/R_Programming.swc")
 ````
