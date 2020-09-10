@@ -14,6 +14,16 @@ You will need to use the direct login account for the course. This uses your uni
  
 https://noteable.edina.ac.uk/launch/
  
+## From noteable
+within R console
+```
+#install.packages("xfun_0.16.tar.gz",repos=null)
+install.packages("xfun",repos="http://cran.rstudio.com")
+install.packages("swirl",repos="http://cran.rstudio.com")
+#swirl::install_course("R Programming")
+swirl::install_course("Getting and Cleaning Data")
+swirl::install_course("Exploratory_Data_Analysis")
+```
 
 ## Download swirl package 
 
