@@ -1,86 +1,182 @@
 ---
-title: 'R Genomics: Aggregating and Analyzing Data with dplyr'
+title: 'R Genomics: Data Wrangling and Analyses with Tidyverser'
 output:
   html_document:
     df_print: paged
 editor_options:
   chunk_output_type: inline
+  markdown: 
+    wrap: 72
 ---
 
-[Aggregating and Analyzing Data with dplyr](https://datacarpentry.org/genomics-r-intro/04-dplyr/index.html)
-
+[Aggregating and Analyzing Data with
+dplyr](https://datacarpentry.org/genomics-r-intro/04-dplyr/index.html)
 
 ## Questions
 
-* How can I manipulate dataframes without repeating myself?
+-   How can I manipulate data frames without repeating myself?
 
 ## Objectives
 
-* Describe what the dplyr package in R is used for.
+-   Select certain columns in a data frame with the **`dplyr`** function
+    `select`.
 
-* Apply common dplyr functions to manipulate data in R.
+-   Extract certain rows in a data frame according to logical (boolean)
+    conditions with the **`dplyr`** function `filter`.
 
-* Employ the ‘pipe’ operator to link together a sequence of functions.
+-   Link the output of one **`dplyr`** function to the input of another
+    function with the 'pipe' operator `%>%`.
 
-* Employ the ‘mutate’ function to apply other chosen functions to existing columns and create new columns of data.
+-   Add new columns to a data frame that are functions of existing
+    columns with `mutate`.
 
-* Employ the ‘split-apply-combine’ concept to split the data into groups, apply analysis to each group, and combine the results.
+-   Use the split-apply-combine concept for data analysis.
 
+-   Use `summarize`, `group_by`, and `count` to split a data frame into
+    groups of observations, apply summary statistics for each group, and
+    then combine the results.
 
-# dplyr
+-   Employ the 'split-apply-combine' concept to split the data into
+    groups, apply analysis to each group, and combine the results.
 
-Bracket `[]` subsetting is handy, but it can be cumbersome and difficult to read, especially for complicated operations.
+-   Export a data frame to a .csv file.
 
-Luckily, the [dplyr](https://cran.r-project.org/package=dplyr) package provides a number of very useful functions for manipulating dataframes in a way that will reduce repetition, reduce the probability of making errors, and probably even save you some typing. 
+# **Data manipulation using `dplyr`** and **`tidyr`** from **`tidyverse`** package
 
-As an added bonus, you might even find the dplyr grammar easier to read.
+Bracket subsetting is handy, but it can be cumbersome and difficult to
+read, especially for complicated operations.
 
-Here we’re going to cover 6 of the most commonly used functions as well as using pipes (%>%) to combine them.
+Luckily, the [`dplyr`](https://cran.r-project.org/package=dplyr) package
+provides a number of very useful functions for manipulating data frames
+in a way that will reduce repetition, reduce the probability of making
+errors, and probably even save you some typing.
 
-* `select()`
-* `filter()`
-* `group_by()`
-* `summarize()`
-* `mutate()`
+As an added bonus, you might even find the `dplyr` grammar easier to
+read.
 
-Packages in R are sets of additional functions that let you do more stuff in R. 
+Here we're going to cover some of the most commonly used functions as
+well as using pipes (`|>`) to combine them:
 
-The functions we’ve been using, like `str()`, come built into R; packages give you access to more functions. 
+1.  `glimpse()`
+
+2.  `select()`
+
+3.  `filter()`
+
+4.  `group_by()`
+
+5.  `summarize()`
+
+6.  `mutate()`
+
+Packages in R are sets of additional functions that let you do more
+stuff in R.
+
+The functions we've been using, like `str()`, come built into R;
+packages give you access to more functions.
 
 You need to install a package and then load it to be able to use it
 
 ```{r install_dplyr}
-#install.packages("dplyr") ## install
-library("dplyr")          ## load
+install.packages("dplyr") ## installs dplyr package
+install.packages("readr") ## install readr pacakge
 ```
 
+Read in `combined_tidy_vcf.csv`
 
-Read in combined_tidy_vcf.csv using argument `stringsAsFactors = FALSE`
+## **What is dplyr?**
 
-```{r read_csv_stringsAsFctfalse}
-variants_tbl <-read.csv(file.path("rawdata","combined_tidy_vcf.csv"),stringsAsFactors = FALSE)
+The package `dplyr` is a fairly new (2014) package that tries to provide
+easy tools for the most common data manipulation tasks.
+
+This package is also included in the [`tidyverse`
+package](https://www.tidyverse.org/), which is a collection of eight
+different packages
+
+(`dplyr`, `ggplot2`, `tibble`, `tidyr`, `readr`, `purrr`, `stringr`, and
+`forcats`).
+
+It is built to work directly with data frames.
+
+### **Loading .csv files in tidy style**
+
+The Tidyverse's `readr` package provides its own unique way of loading
+.csv files in to R using `read_csv()`, which is similar to `read.csv()`.
+
+`read_csv()` allows users to load in their data
+
+1.  faster,
+
+2.  doesn't create row names, and
+
+3.  allows you to access non-standard variable names (ie. variables that
+    start with numbers of contain spaces),
+
+4.  and outputs your data on the R console in a tidier way.
+
+    In short, it's a much friendlier way of loading in potentially messy
+    data.
+
+```{r}
+# Read in rawdata/combined_tidy_vcf.csv using the readr package's read_csv function
+variants_tbl <-read_csv(file.path("rawdata","combined_tidy_vcf.csv"))
+
+#display variants_tbl tibble 
+variants_tbl
+
+#data frame variants
+variants
 ```
-
-
-
 
 # Selecting columns and filtering rows
 
-select sample_id, REF, ALT, DP from varaints df
+Using bracket notation, in order to pull out certain columns, we would
+have to know which index referred to that column,
+
+which took an extra step,
+
+and if we had re-ordered our columns or added one in the middle, the
+indexes in our script would suddenly refer to the 'wrong' column, which
+might cause confusion!
+
+As a refresher, here's how we pulled out columns using the bracket
+notation:
+
+```{r}
+# get columns: sample_id, REF, ALT, DP
+variants_tbl[, c(1, 5, 6, 12)]
+```
+
+But our code isn't very easy to understand and we'd need to see the
+output to make sure we had the correct columns.
+
+Enter `dplyr`!
+
+#### **How to `select()`** columns
+
+To select columns of a data frame, use `select()`. The first argument to
+this function is the data frame (`variants`), and the subsequent
+arguments are the columns to keep.
 
 ```{r dplyr_select}
+#select sample_id, REF, ALT, DP from variants df
 select(variants_tbl, sample_id, REF, ALT, DP)
 ```
 
-To select all columns except certain ones, put a “-“ in front of the variable to exclude it.
+This code is much easier to understand!
+
+To select all columns except certain ones, put a "`-`" in front of the
+variable to exclude it.
 
 select all but CHROM column
 
 ```{r dplyr_select_negate}
+#select all but CHROM column
 select(variants_tbl, -CHROM)
 ```
 
-dplyr also provides useful functions to select columns based on their names. For instance, ends_with()
+`dplyr` also provides useful functions to select columns based on their
+names. For instance, ends_with()
 
 select columns that end with B
 
@@ -88,23 +184,39 @@ select columns that end with B
 select(variants_tbl, ends_with("B"))
 ```
 
+## **Exercise**
+
+From the `variants_tbl` Create a table that contains all the columns
+with the letter "`i`" and column "`POS`", without columns "**Indiv**"
+and "**FILTER**".
+
+Hint: look at the help function `conatins()` we've just covered.
+
+```{r}
+
+```
+
 ## dplyr filtering
 
-To choose rows, we can use filter(). 
-For instance, to keep the rows for the sample_id SRR2584863:
+To choose rows, we can use dplyr's `filter()` function.
+
+For instance, to keep the rows for the `sample_id` `SRR2584863`:
 
 ```{r dplyr_filter}
+# use dplyr's filter funtion to keep the rows for the sample_id SRR2584863:
 filter(variants_tbl,sample_id=="SRR2584863")
 
 ```
 
-Note that this is equivalent to the base R code below, but is easier to read!
+Note that this is equivalent to the base R code below, but is easier to
+read!
+
 ```{r r_base_filter}
 variants_tbl[variants_tbl$sample_id == "SRR2584863",]
 ```
 
-
-filter() will keep all the rows that match the conditions that are provided. 
+`filter()`will keep all the rows that match the conditions that are
+provided.
 
 Here are a few examples:
 
@@ -119,93 +231,147 @@ filter(variants_tbl, QUAL >= 100)
 filter(variants_tbl,INDEL==TRUE)
 ```
 
+`filter()` allows you to combine multiple conditions.
 
+You can separate them using a `,` as arguments to the function, they
+will be combined using the `&` (AND) logical operator.
 
+If you need to use the `|` (OR) logical operator, you can specify it
+explicitly:
+
+```{r}
+# this is equivalent to:
+#   filter(variants, sample_id == "SRR2584863" & QUAL >= 100)
+filter(variants, sample_id == "SRR2584863", QUAL >= 100)
+```
+
+```{r}
+# using `|` logical operator
+filter(variants, sample_id == "SRR2584863", (INDEL | QUAL >= 100))
+```
+
+## **Challenge**
+
+`filter` for all the mutations in the `variants_tbl` that occurred
+between
+
+the positions (`POS`) `1e6` (one million) and `2e6`(included)
+
+have `QUAL` greater than 200.
+
+```{r}
+
+```
 
 ## Pipes
 
-But what if you wanted to select and filter? 
+But what if you wanted to `select` and `filter`?
 
-We can do this with pipes. 
+We can do this with pipes.
 
-Pipes, are a fairly recent addition to R. 
+Pipes, are a fairly recent addition to R.
 
-Pipes let you take the output of one function and send it directly to the next, which is useful when you need to many things to the same data set. 
+Pipes let you take the output of one function and send it directly to
+the next, which is useful when you need to many things to the same data
+set.
 
-It was possible to do this before pipes were added to R, but it was much messier and more difficult. 
+It was possible to do this before pipes were added to R, but it was much
+messier and more difficult.
 
-Pipes in R look like %>% and are made available via the magrittr package, which is installed as part of dplyr. 
+Pipes in R look like `|>` ; Previous only available via the magrittr
+package, which is installed as part of dply.
 
-If you use RStudio, you can type the pipe with Ctrl + Shift + M if you’re using a PC, or Cmd + Shift + M if you’re using a Mac.
-
-
-Use pipes together with select and filter to get REF, ALT, DP columns for sample_id SRR2584863
+Use pipes together with select and filter to get `REF`, `ALT`, `DP`
+columns for `sample_id` `SRR2584863`
 
 ```{r pipe_example}
-variants_tbl %>%
-  filter(sample_id == "SRR2584863") %>%
+# Use pipes together with select and filter to get REF, ALT, DP columns for sample_id SRR2584863
+variants_tbl|>
+  filter(sample_id == "SRR2584863")|>
   select(REF, ALT, DP)
 ```
 
-
-
-
-
-we want to create a new object with this smaller version of the data we can do so by assigning it a new name:
+We want to create a new object with this smaller version of the data we
+can do so by assigning it a new name:
 
 ```{r pipe_example_new_variable}
-SRR2584863_variants <- variants_tbl %>%
-  filter(sample_id == "SRR2584863") %>%
+# Use pipes together with select and filter to get REF, ALT, DP columns for sample_id SRR2584863 and save to new dataframe SRR2584863_variants
+SRR2584863_variants <- variants_tbl |>
+  filter(sample_id == "SRR2584863") |>
   select(REF, ALT, DP)
+
+# SRR2584863_variants
 SRR2584863_variants
 ```
 
+## **Exercise: Pipe and filter**
 
+Starting with the `variants` dataframe, use pipes `|>` to subset the
+data to include only observations from `SRR2584863` sample,
 
+where the filtered depth (`DP`) is at least 10.
 
+Retain only the columns `REF`, `ALT`, and `POS`.
 
-###########Exercise##################
-#Starting with the variants dataframe, 
-#use pipes to subset the data to include only observations from SRR2584863 sample, 
-#where the filtered depth (DP) is at least 10. Retain only the columns REF, ALT, and POS.
-###########Exercise##################
+```{r exercise answer}
 
+```
 
 ## Adding a column, Mutate
 
-We have a column titled “QUAL”. 
+Frequently you'll want to create new columns based on the values in
+existing columns, for example to do unit conversions or find the ratio
+of values in two columns.
 
-This is a Phred-scaled confidence score that a polymorphism exists at this position given the sequencing data. 
+For this we'll use the `dplyr` function `mutate()`.
 
-Lower QUAL scores indicate low probability of a polymorphism existing at that site.
+We have a column titled "QUAL".
 
-We can convert the confidence value QUAL to a probability value according to the formula:
-  
-Probability = 1- 10 ^ -(QUAL/10)
+This is a Phred-scaled confidence score that a polymorphism exists at
+this position given the sequencing data.
 
-Let’s add a column (POLPROB) to our variants dataframe that shows the probability of a polymorphism at that site given the data. 
+Lower QUAL scores indicate low probability of a polymorphism existing at
+that site.
 
+We can convert the confidence value QUAL to a probability value
+according to the formula:
 
+`Probability = 1- 10 ^ -(QUAL/10)`
+
+Let's add a column (`POLPROB`) to our variants dataframe that shows the
+probability of a polymorphism at that site given the data.
 
 ```{r adding_a_column_using_dplyr}
+# add a column (POLPROB) to our variants dataframe using following formula: 
+# 1 - (10 ^ -(QUAL/10)
 variants_tbl %>%
   mutate(POLPROB = 1 - (10 ^ -(QUAL/10)))
 ```
 
+## **Exercise**
 
-############Exercise##################
-#There are a lot of columns in our dataset, so let’s just look at the sample_id, POS, QUAL, and POLPROB columns for now.
-#Add a line to the above code to only show those columns.
-#####################################
+There are a lot of columns in our dataset, so let's just look at the
+`sample_id`, `POS`, `QUAL`, and `POLPROB` columns for now. Add a line to
+the below code to only show those columns and show the output via
+`glimpse()`.
 
-Let’s create a new column, called “indel_size” that contains the size difference between the our sequences and the reference genome. 
-The function, nchar() returns the number of letters in a string.
+```{r exercise_answer}
+variants %>%
+  mutate(POLPROB = 1 - (10 ^ -(QUAL/10)))
+```
+
+### Extra
+
+Let's create a new column, called "indel_size" that contains the size
+difference between the our sequences and the reference genome. The
+function, nchar() returns the number of letters in a string.
 
 ```{r}
 variants_tbl %>%
   mutate(indel_size = nchar(ALT) - nchar(REF)) %>% 
   select(ALT,REF,indel_size)
 ```
+
 ```{r variants_indel}
 variants_indel <- variants_tbl %>%
   mutate(
@@ -217,70 +383,67 @@ variants_indel <- variants_tbl %>%
     ))
 ```
 
-
-
-
 ## Split-apply-combine data analysis and the summarize() function
 
-Many data analysis tasks can be approached using the “split-apply-combine” paradigm: 
+Many data analysis tasks can be approached using the
+"`split-apply-combine`" paradigm:
 
-split the data into groups, 
- apply some analysis to each group, 
-  and then combine the results. dplyr makes 
+1.  `split` the data into groups,
+2.  `apply` some analysis to each group,
+3.  and then `combine` the results. dplyr makes
 
-this very easy through the use of the 
+this very easy through the use of the
 
-group_by() function, which splits the data into groups. 
+`group_by()`function, which splits the data into groups.
 
-When the data is grouped in this way summarize() can be used to collapse each group into a single-row summary. 
+When the data is grouped in this way the `summarize()` function can be
+used to collapse each group into a single-row summary.
 
-summarize() does this by applying an aggregating or summary function to each group.
+`summarize()`does this by applying an aggregating or summary function to
+each group.
 
-# For example, if we wanted to group variants_indel by mutation_type and find the average size for the insertions and deletions:
-
-```{r group_by}
-variants_indel %>% 
-  group_by(mutation_type) %>% 
-  summarise(mean_size = mean(indel_size))
+```{r}
+# For example, if we wanted to group by sample_id and find the number of rows of data for each sample, we would do:
+variants %>%
+  group_by(sample_id) %>%
+  summarize(n_observations = n())
 ```
 
+Here the summary function used was `n()` to find the count for each
+group, which we displayed in a column which we called `n_observations`.
 
-View the lowest and highest filtered depth (DP) for each sample using group_by and summarize:
+We can also apply many other functions to individual columns to get
+other summary statistics.
+
+For example, we can use built-in functions like
+
+`mean()`,
+
+`median()`,
+
+`min()`, and
+
+`max()`.
+
+These are called "built-in functions" because they come with R and don't
+require that you install any additional packages.
+
+```{r group_by}
+# So to view the highest (max()) filtered depth (DP) for each sample (sample_id):
+variants %>%
+  group_by(sample_id) %>%
+  summarize(max(DP))
+```
+
+View the lowest and highest filtered depth (DP) for each sample using
+group_by and summarize:
 
 ```{r high_low_DP}
+# View the lowest and highest filtered depth (DP) for each sample using group_by and summarize:
 variants_indel %>%
   group_by(sample_id) %>%
   summarize(min(DP),max(DP))
 ```
-
-
-It is often useful to calculate how many observations are present in each group. The function n() helps you do that:
-
-Count how many mutations there are for each mutation_type
-
-```{r n_function}
-variants_indel %>%
-  group_by(mutation_type) %>%
-  summarize(n = n())
-```
-
-Because it’s a common operation, the dplyr verb, count() is a “shortcut” that combines these 2 commands:
-
-```{r dplyr_count}
-variants_indel %>%
-  count(mutation_type)
-
-```
-
-group_by() (and therfore count()) can also take multiple column names.
-
-How many mutations are found in each sample?
-
-```{r}
-variants_indel %>% 
-  count(mutation_type,sample_id)
-```
-
 
 ## Exporting
 
@@ -293,14 +456,33 @@ write object variants_indel to a csv file in the data directory
   write.csv(variants_indel, file.path("../","data","variants_indel.csv"))
 ```
 
+### **Note: Handling Missing Values In Data**
+
+By default, all **R functions operating on vectors that contains missing
+data will return NA**.
+
+It's a way to make sure that users know they have missing data, and make
+a conscious decision on how to deal with it.
+
+When dealing with simple statistics like the mean, the easiest way to
+ignore `NA` (the missing data) is to use `na.rm = TRUE` (`rm` stands for
+remove).
+
+```{r}
+mean(c(1,2,3,NA))
+mean(c(1,2,3,NA),na.rm=T)
+```
+
 ## Key Points
 
-* Use the dplyr package to manipulate dataframes.
+-   Use the `dplyr` package to manipulate dataframes.
 
-* Use select() to choose variables from a dataframe.
+-   Use `select()`to choose variables from a dataframe.
 
-* Use filter() to choose data based on values.
+-   Use `filter()` to choose data based on values.
 
-* Use group_by() and summarize() to work with subsets of data.
+-   Use the pipe operator `|>` to join functions
 
-* Use mutate() to create new variables.
+-   Use `group_by()` and`summarize()` to work with subsets of data.
+
+-   Use `mutate()` to create new variables.

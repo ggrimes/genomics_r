@@ -1,37 +1,45 @@
 ---
-title: 'R Genomics: Factors and Data frames'
+title: 'R Basics continued - factors and data frames'
 output:
   html_document:
     df_print: paged
 editor_options:
   chunk_output_type: inline
+  markdown: 
+    wrap: 72
 ---
-
 
 # R Basics continued - factors and data frames
 
-Working with spreadsheets (tabular data)
+-   How do I get started with tabular data (e.g. spreadsheets) in R?
 
-Importing tabular data into R
+-   What are some best practices for reading data into R?
 
-There are several ways to import data into R. 
+-   How do I save tabular data generated in R?
 
-For our purpose here, we will focus on using the tools every R installation comes with (so called “base” R) 
+## **Working with spreadsheets (tabular data)**
 
-to import a comma-delimited file containing the results of our variant calling workflow. 
+There are several ways to import data into R.
+
+For our purpose here, we will focus on using the tools every R
+installation comes with (so called "`base`" R)
+
+to import a comma-delimited file containing the results of our variant
+calling workflow.
 
 We will need to load the sheet using a function called `read.csv()`.
 
 ```{r read_csv}
+# Review the arguments of the read.csv() function
 ?read.csv()
 ```
 
-
-
-Now let’s read in the file combined_tidy_vcf.csv 
+Now let's read in the file `combined_tidy_vcf.csv`
 
 ```{r read_in_data}
-# read in a CSV file and save it as 'variants'
+# use getwd() to show where we are 
+
+## read in a CSV file and save it as 'variants'
 variants <- read.csv(file.path("rawdata","combined_tidy_vcf.csv"))
 ```
 
@@ -43,72 +51,132 @@ View(variants)
 
 ## Summarizing and determining the structure of a data frame.
 
-A data frame is the standard way in R to store tabular data. 
+1.  A data frame is the standard way in R to store tabular data.
 
-A data fame could also be thought of as a collection of vectors, all of which have the same length. 
+2.  A data fame could also be thought of as a collection of vectors, all
+    of which have the same length.
 
-Using only two functions, we can learn a lot about out data frame  including some summary statistics as well as well as the “structure” of the data frame. 
+Using only two functions, we can learn a lot about out data frame
+including some summary statistics as well as well as the "structure" of
+the data frame.
 
-Let’s examine what each of these functions can tell us:
-
-Use `summary()` function on variants data frame
+Let's examine what each of these functions can tell us:
 
 ```{r summarise}
+## Use summary() function on variants data frame
 summary(variants)
 ```
 
-Before we operate on the data, we also need to know a little more about the data frame structure 
-to do that we use the `str()` function:
+Our data frame had 29 variables, so we get 29 fields that summarize the
+data.
 
-Use `str()` function on the variants data frame.
+The `QUAL`, `IMF`, and `VDB` variables (and several others) are
+numerical data and so you get summary statistics on the min and max
+values for these columns, as well as mean, median, and interquartile
+ranges.
+
+Many of the other variables (e.g. `sample_id`) are treated as characters
+data (more on this in a bit).
+
+### Structure
+
+Now, let's use the `str()` (structure) function to look a little more
+closely at how data frames work:
 
 ```{r str}
+# Use str() function on the variants data frame.
 str(variants)
 ```
 
-A really usefull function is `skim()` from the [skimr](https://cran.r-project.org/web/packages/skimr/index.html) package 
+Ok, thats a lot up unpack! Some things to notice.
+
+-   the object type `data.frame` is displayed in the first row along
+    with its dimensions, in this case 801 observations (rows) and 4
+    variables (columns)
+
+-   Each variable (column) has a name (e.g. `sample_id`). This is
+    followed by the object mode (e.g. chr, int, etc.). Notice that
+    before each variable name there is a `$` -
+
+We can use the \$ symbol to extract a single column of a data frame
+
+`<object_name>$<column_name>`
+
+To get the CHROM column
+
+`variants$CHROM`
+
+```{r}
+# extract a REF column from the variants object using $ syntax
+```
+
+### Skimr
+
+A really usefull function is `skim()` from the
+[skimr](https://cran.r-project.org/web/packages/skimr/index.html)
+package
 
 ```{r}
 skimr::skim(variants)
 ```
 
-You will see that one of columns/vectors that make up the variants data frame is a new type of data structure `fct`.
-
 ## Introducing Factors
 
-Factors are the final major data structure we will introduce in our R genomics lessons. 
+Factors are the final major data structure we will introduce in our R
+genomics lessons.
 
-Factors can be thought of as vectors which are specialized for categorical data.
+Factors can be thought of as vectors which are specialized for
+categorical data.
 
-subset the fct column REF to a new object using `$` 
+We can convert a character vector to factor using the function
+`as.factor()`
 
 ```{r}
+# convert REF column to factor
+variants$REF<-as.factor(REF)
+
+# use str function on column
+str(variants$REF)
+```
+
+Extract the `fct` column REF to a new object using `$ syntax`
+
+```{r}
+# subset the fct column REF to a new object using $ and save it object REF
 REF <- variants$REF
 ```
 
-Let’s look at the first few items in our factor using `head()`:
+Let's look at the first few items in our factor using `head() function`:
 
 ```{r head}
+# Let's look at the first few items in our factor using head() function:
 head(REF)
-str(REF)
+
 ```
 
 # Plotting
 
-One of the most common uses for factors will be when you plot categorical values. 
+One of the most common uses for factors will be when you plot
+categorical values.
 
-For example, suppose we want to know how many of our variants had each possible nucleotide 
+For example, suppose we want to know how many of our variants had each
+possible nucleotide
 
-(or nucleotide combination) in the reference genome? We could generate a plot:
+(or nucleotide combination) in the reference genome? We could generate a
+plot:
 
 Plot REF using the `plot()` function
 
 ```{r plotting}
+# Plot REF using the plot() function
 plot(REF)
 ```
 
-If you are using factors you should use the forcats package that has really useful functions to manage factors.
-Extra (forcats )[https://forcats.tidyverse.org/]
+### Extra Forcats
+
+If you are using factors you should use the `forcats` package that has
+really useful functions to manage factors. Extra (forcats
+)[<https://forcats.tidyverse.org/>]
 
 ```{r forcats}
 plot(forcats::fct_lump(REF,n=5))
@@ -116,130 +184,175 @@ plot(forcats::fct_lump(REF,n=5))
 plot(forcats::fct_infreq(forcats::fct_lump(REF,n=5)))
 ```
 
-
 Back to data frames
 
 ## Subsetting data frames
 
-Next, we are going to talk about how you can get specific values from data frames.
+Next, we are going to talk about how you can get specific values from
+data frames.
 
-The subsetting notation is very similar to what we learned for vectors. 
+The subsetting notation is very similar to what we learned for vectors.
 
 The key differences include:
 
-* Typically provide two values separated by commas: `data.frame[row, column]`
-
+-   Typically provide two values separated by commas:
+    `data.frame[row, column]`
 
 Subset the first row and column of variants data frame.
 
 ```{r}
+# Subset the first row and column of variants data frame using [<rows>,<columns>] notation.
 variants[1,1]
 ```
 
-In cases where you are taking a continuous range of numbers use a colon between the numbers (start:stop, inclusive)
+In cases where you are taking a continuous range of numbers use a colon
+between the numbers (`start:stop`, inclusive)
 
 Subset the first row and column of variants data frame.
 
 ```{r}
+# Subset the first row and column of variants data frame.
 variants[1:5,1:5]
 ```
 
+For a non continuous set of numbers, pass a vector using `c()`
 
-For a non continuous set of numbers, pass a vector using c()
+```{r}
+# Subset the  rows 1,4 and 9 and the first 5 column of variants data frame.
 variants[c(1,4,9),1:5]
+```
 
-Index using the name of a column(s) by passing them as vectors using c()
+#### Index using the name of a column(s)
+
+Index using the name of a column(s) by passing them as vectors using
+`c() e.g`
+
+```{r}
+# extract the first 5 rows and column name POS
 variants[1:5,c("POS")]
+```
 
-Finally, in all of the subsetting exercises above, we printed values to the screen. 
-You can create a new data frame object by assigning them to a new object name
+## Subsetting using logical statements
 
-Create a new data frame from variants object containing only observations from sample_id SRR2584863 
+We can use logical statements to filter out data frames as well
 
-```{r create_new_df}
+```{r}
+# filter data for row with sample_id = SRR2584863
+variants[variants$sample_id=="SRR2584863",]
+```
+
+Finally, in all of the subsetting exercises above, we printed values to
+the screen.
+
+You can create a new data frame object by assigning them to a new object
+name
+
+Create a new data frame from variants object containing only
+observations from sample_id SRR2584863
+
+```{r }
+# Create a new data frame, SRR2584863_variants   ,from variants object containing only observations from sample_id SRR2584863
+
 SRR2584863_variants <-variants[variants$sample_id=="SRR2584863",]
 ```
 
 Check the dimension of the data frame `dim()` `nrow()` and `ncol()`
 
 ```{r data_frame_dimensions}
+# Check the dimension of the data frame dim() nrow() and ncol()
 dim(SRR2584863_variants)
+nrow(SRR2584863_variants)
+ncol(SRR2584863_variants)
 ```
 
-## get a summary of the data frame `summary()`
+get a summary of the data frame `summary()`
 
 ```{r data_frame_summary}
+# get a summary of the data frame summary()
 summary(SRR2584863_variants)
 ```
 
+## **Data frame bonus material: math, sorting, renaming**
 
+Here are a few operations that don't need much explanation, but which
+are good to know.
 
-##  Math, sorting, renaming on data frames
+There are lots of arithmetic functions you may want to apply to your
+data frame, covering those would be a course in itself (there is some
+starting material
+[here](https://swcarpentry.github.io/r-novice-inflammation/15-supp-loops-in-depth/)).
+Our lessons will cover some additional summary statistical functions in
+a subsequent lesson, but overall we will focus on data cleaning and
+visualization.
 
-You can use functions like 
+You can use functions like
 
-`mean()`
-`min()`
-`max()`
+`mean()` `min()` `max()`
 
 on an individual column.
 
 Find maximum depth, DP, of all variants
 
 ```{r max_depth}
+# Find maximum depth, DP, of all variants using max() function
 max(variants$DP)
 ```
 
-
-You can sort a data frame using the  `order()` function:
+You can sort a data frame using the `order()` function:
 
 Sort variants data frame by DP
 
 ```{r sort_data_frame}
+# Sort variants data frame by DP
 sorted_by_DP <- variants[order(variants$DP), ]
+# view the first 6 rows using head
 head(sorted_by_DP$DP)
 ```
 
-
-
 You can rename columns: `colnames()`
 
-Rename column  sample_id to strain
-  
+Rename column sample_id to strain
+
 ```{r rename_columns}
+# get names of columns using colnames() function
+colnames(variants)
+
+# Rename column sample_id to strain (use colnames(variants) == "sample_id") to filter column
 colnames(variants)[colnames(variants) == "sample_id"] <- "strain"
-```
 
-
-Check the column name.
-
-```{r colnames}
+#Check the new column names.
 colnames(variants)
 ```
 
-
-
+```{}
+```
 
 ## Saving your data frame to a file
 
-* `write.csv()`
-* `file.path()`
+We can save data to a file. We will save our `SRR2584863_variants`
+object to a .csv using the functions
+
+-   `write.csv()`
+-   `file.path()`
 
 ```{r write_csv}
+#Save SRR2584863_variants object  to a file using write.csv
 write.csv(x = SRR2584863_variants, file = file.path("../","data","SRR2584863_variants.csv"))
 ```
 
-
 ## Key Points
 
-* It is easy to import data into R from tabular formats 
-However, you still need to check that R has imported and interpreted your data correctly
+-   It is easy to import data into R from tabular formats However, you
+    still need to check that R has imported and interpreted your data
+    correctly
 
-* There are best practices for organizing your data (keeping it tidy) and R is great for this
+-   There are best practices for organizing your data (keeping it tidy)
+    and R is great for this
 
-* Base R has many useful functions for manipulating your data, 
-but all of R’s capabilities are greatly enhanced by software packages developed by the community
+-   Base R has many useful functions for manipulating your data, but all
+    of R's capabilities are greatly enhanced by software packages
+    developed by the community
 
-## Exercises 
+## Exercises
 
 Swirl exercises data frames and factors
