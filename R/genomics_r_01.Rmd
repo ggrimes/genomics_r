@@ -16,6 +16,7 @@ editor_options:
 Find out where you are using `getwd()`
 
 ```{r where_am_i}
+# Find out where you are using getwd()
 getwd()
 ```
 
@@ -29,7 +30,7 @@ Use function `dir.create()` to create the directories
 -   rawdata
 
 ```{r create_dir}
-
+# Use function dir.create() to create the directories
 ```
 
 ## Download raw data file
@@ -40,6 +41,7 @@ Use function `download.file()` to download the file
 rawdata/combined_tidy_vcf.csv
 
 ```{r download_data}
+# Use function download.file() to download the file https://ndownloader.figshare.com/files/14632895 to rawdata/combined_tidy_vcf.csv
 download.file(url = "https://ndownloader.figshare.com/files/14632895",destfile = "rawdata/combined_tidy_vcf.csv")
 ```
 
@@ -48,6 +50,8 @@ download.file(url = "https://ndownloader.figshare.com/files/14632895",destfile =
 `?` `args()`
 
 ```{r getting_help}
+#?
+#args()
 ?getwd()
 args(round)
 ```
@@ -64,6 +68,8 @@ start typing function `round()` and use tab
 
 # R Basics
 
+## Objectives
+
 -   Be able to create the most common R objects including vectors
 
 -   Understand that vectors have modes, which correspond to the type of
@@ -78,35 +84,143 @@ start typing function `round()` and use tab
 -   Understand that lists can hold data of more than one mode and can be
     indexed
 
+## **What these lessons will not teach you**
+
+**Here are some R skills we will *not* cover in these lessons**
+
+-   How to create and work with R matrices and R lists
+
+-   How to create and work with loops and conditional statements, and
+    the "apply" family of functions (which are super useful, read more
+    [here](https://www.r-bloggers.com/r-tutorial-on-the-apply-family-of-functions/))
+
+-   How to do basic string manipulations (e.g. finding patterns in text
+    using grep, replacing text)
+
+-   How to plot using the default R graphic tools (we *will* cover plot
+    creation, but will do so using the popular plotting package
+    `ggplot2`)
+
+-   How to use advanced R statistical functions
+
 ## Creating objects in R
+
+What might be called a `variable` in many languages is called an
+**object** in R.
+
+**To create an object you need:**
+
+-   a name (e.g. `a`)
+
+-   a value (e.g. `1`)
+
+-   the assignment operator (`<-`)
 
 This line creates the object 'a' and assigns it the value '1'
 
 `<-` `->` `=`
 
 ```{r}
+# creates the object 'a' and assigns it the numeric value '1', <-, ->, =
 a <-1
 1 -> a
 a=1
 a
+# create an object gene_name with the string value PTEN for gene name
+# strings have quotes, single or double
+gene_name="PTEN"
+```
+
+## **Exercise: Create some objects in R**
+
+```{r}
+# Create an object that has the value of number of pairs of human chromosomes
+chr_num=23
+```
+
+## **Naming objects in R**
+
+Here are some important details about naming objects in R.
+
+-   **Avoid spaces and special characters**: Object names cannot contain
+    spaces or the minus sign (`-`). You can use '\_' to make names more
+    readable. You should avoid using special characters in your object
+    name (e.g. ! \@ \# . , etc.). Also, object names cannot begin with a
+    number.
+
+-   **Use short, easy-to-understand names**: You should avoid naming
+    your objects using single letters (e.g. 'n', 'p', etc.). This is
+    mostly to encourage you to use names that would make sense to anyone
+    reading your code (a colleague, or even yourself a year from now).
+    Also, avoiding excessively long names will make your code more
+    readable.
+
+-   **Avoid commonly used names**: There are several names that may
+    already have a definition in the R language (e.g. 'mean', 'min',
+    'max'). One clue that a name already has meaning is that if you
+    start typing a name in RStudio and it gets a colored highlight or
+    RStudio gives you a suggested autocompletion you have chosen a name
+    that has a reserved meaning.
+
+-   **Use the recommended assignment operator**: In R, we use '\<- '
+
+```{r}
+# example of bad names
+1val=1
+val?q=1
+first val=1
+
+```
+
+## **Reassigning object names or deleting objects**
+
+Once an object has a value, you can change that value by overwriting it.
+
+[**R will not give you a warning or error**]{.ul} if you overwriting an
+object, which may or may not be a good thing depending on how you look
+at it.
+
+```{r}
+# gene_name has the value 'pten' or whatever value you used in the challenge.
+# We will now assign the new value 'TP53'
+gene_name
+gene_name="TP53"
+gene_name
+```
+
+You can also remove an object from R's memory entirely. The `rm()`
+function will delete the object.
+
+```{r}
+# delete the object 'gene_name'
+rm(gene_name)
+```
+
+If you run a line of code that has only an object name, R will normally
+display the contents of that object.
+
+In this case, we are told the object no longer exists.
+
+```{r}
+gene
 ```
 
 ## Understanding object data types (modes)
 
 In R, every object has two properties:
 
--   Length: How many distinct values are held in that object
+-   `Length`: How many distinct values are held in that object
 
--   Mode: What is the classification (type) of that object.
+-   `Mode`: What is the classification (type) of that object.
 
 We will get to the "length" property later in the lesson.
 
-The "mode" property corresponds to the type of data an object
+The "`mode`" property corresponds to the type of data an object
 represents.
 
 The most common modes you will encounter in R are:
 
--   numeric: Numbers such floating point,decimals (1.0, 0.5, 3.14)
+-   `numeric`: Numbers such floating point,decimals (1.0, 0.5, 3.14)
 
 ```{r numerics}
 mode(1)
@@ -114,7 +228,7 @@ mode(1.1)
 mode(1e6)
 ```
 
--   character A sequence of letters ornumbers in single '' or double ""
+-   character A sequence of letters or numbers in single '' or double ""
     quotes
 
 ```{r character}
@@ -128,6 +242,21 @@ mode('1')
 ```{r logicals}
 mode(FALSE)
 mode(TRUE)
+```
+
+There are a few other modes (i.e. "complex", "raw" etc.) but these are
+the three we will work with in this lesson.
+
+\
+**Exercise: Create objects and check their modes**
+
+```{r}
+#Create the following objects in R, then use the mode() function to verify their modes. Try to guess what the mode will be before you look at the solution
+
+chromosome_name <- 'chr02'
+od_600_value <- 0.47
+chr_position <- '1001701'
+spock <- TRUE
 ```
 
 ## Mathematical and functional operations on objects
@@ -151,7 +280,10 @@ And importantly, can be used on any object that evaluates to (i.e.
 interpreted by R) a numeric object:
 
 ```{r}
-a*100
+# assign  numeric vale of 23 to object human_chr_number
+human_chr_number =23
+# multiply the object 'human_chr_number' by 2
+human_chr_number * 2
 ```
 
 ## Vectors
@@ -171,13 +303,19 @@ Create the vector snp_genes using these gene names "OXTR", "ACTN3",
 "AR", "OPRM1"
 
 ```{r create_vector}
+# Create the SNP gene name vector with values "OXTR", "ACTN3", "AR", "OPRM1"
 snp_genes<-c("OXTR", "ACTN3", "AR", "OPRM1")
 ```
 
-Check the mode and length of the snp_genes object `mode()` and
-`length()`
+Vectors always have a **mode** and a **length**. You can check these
+with the
+
+`mode()` and
+
+`length()` functions respectively.
 
 ```{r mode_and_length}
+# Check the mode, length, and structure of 'snp_genes'
 mode(snp_genes)
 length(snp_genes)
 ```
@@ -190,7 +328,7 @@ is the `str()` (structure) function.
 str(snp_genes)
 ```
 
-## Creating and Sub setting vectors
+## Creating and Subsetting vectors
 
 Let's create a few more vectors to play around with:
 
@@ -218,19 +356,46 @@ We type the name of the vector followed by square brackets. `[]`
 In those square brackets we place the index (e.g. a number) in that
 bracket as follows:
 
-In R index start from 1
+[**In R index start from**]{.ul} 1
 
 Get the 3rd value in the snp_genes vector
 
 ```{r subset_vector_by_index}
+# get the 3rd value in the snp_genes vector
 snp_genes[3]
 ```
 
-You can also retrieve a range of numbers `:`
+In R, every item your vector is indexed, starting from the first item
+(1) through to the final number of items in your vector. You can also
+retrieve a range of numbers:
 
 ```{r number_range}
-1:3
+# get the 1st through 3rd value in the snp_genes vector
 snp_genes[1:3]
+```
+
+If you want to retrieve several (but not necessarily sequential) items
+from a vector,
+
+you pass a **vector of indices**; a vector that has the numbered
+positions you wish to retrieve.
+
+```{r}
+# get the 1st, 3rd, and 4th value in the snp_genes vector
+
+snp_genes[c(1, 3, 4)]
+```
+
+There are additional (and perhaps less commonly used) ways of subsetting
+a vector (see [these
+examples](https://thomasleeper.com/Rcourse/Tutorials/vectorindexing.html)).
+
+Also, several of these subsetting expressions can be combined:
+
+```{r}
+# get the 1st through the 3rd value, and 4th value in the snp_genes vector
+# yes, this is a little silly in a vector of only 4 values.
+snp_genes[c(1:3,4)]
 ```
 
 ## Adding to, removing, or replacing values in existing vectors
@@ -242,6 +407,8 @@ To do so, you can use the `c()` function again to add your new value:
 Add the gene `'CYP1A1'`and `'APOA5'`to our list of snp genes.
 
 ```{r add_data_to_vector}
+# add the gene 'CYP1A1' and 'APOA5' to our list of snp genes
+snp_genes
 # this overwrites our existing vector
 snp_genes<-c(snp_genes,"CYP1A1","APOA5")
 length(snp_genes)
@@ -252,15 +419,17 @@ index's value removed:
 
 Remove the sixth entry from snp_genes vector.
 
-```{r remove_6_idx_from_snp_genes}
+```{r }
+# Remove the sixth entry from snp_genes vector
 snp_genes
 snp_genes[-6]
+
 ```
 
 We can remove that value from our vector by overwriting it with this
 expression:
 
-```{r remove_and_overwrite_6_idx_from_snp_genes}
+```{r}
 snp_genes_bak<-snp_genes
 snp_genes <- snp_genes[-6]
 snp_genes
@@ -270,9 +439,30 @@ We can also explicitly rename or add a value to our index using double
 bracket notation `[]` and assigment operatoor `<-`
 
 ```{r vector_add_by_position}
+# add gene name  "APOA5" ad the 7th item of the vector
 snp_genes[7]<- "APOA5"
 snp_genes
 ```
+
+Notice in the operation above that R inserts an `NA` value to extend our
+vector so that the gene "APOA5" is an index 7.
+
+This may be a good or not-so-good thing depending on how you use this
+
+## **Exercise: Examining and subsetting vectors**
+
+Answer the following questions to test your knowledge of vectors
+
+Which of the following are true of vectors in R?
+
+A) All vectors have a mode **or** a length\
+B) All vectors have a mode **and** a length\
+C) Vectors may have different lengths\
+D) Items within a vector may be of different modes\
+E) You can use the `c()` to add one or more items to an existing vector\
+F) You can use the `c()` to add a vector to an exiting vector
+
+> \
 
 ## Logical Subsetting
 
@@ -311,6 +501,7 @@ Some of the most common logical operators you will use in R are:
 Create a Logical vector of snp_positions \> 100000000
 
 ```{r create_logical_vector}
+# Create a Logical vector of snp_positions > 100000000
 snp_positions
 snp_positions > 100000000
 ```
@@ -335,10 +526,56 @@ value:
 Find NA values value of `snp_genes` vector
 
 ```{r na_values}
+# print current value of 'snp_genes': 
 snp_genes
-#chr [1:7] "OXTR" "ACTN3" "AR" "OPRM1" "CYP1A1" NA "APOA5"
+
+#use is.na function to find which values are NA
 is.na(snp_genes)
 ```
+
+## **Review Exercise 1**
+
+What data types/modes are the following vectors? a. `snps`\
+b. `snp_chromosomes`\
+c. `snp_positions`
+
+## **Review Exercise 2**
+
+Add the following values to the specified vectors: a. To the `snps`
+vector add: 'rs662799'\
+b. To the `snp_chromosomes` vector add: 11\
+c. To the `snp_positions` vector add: 116792991
+
+## **Review Exercise 3**
+
+Make the following change to the `snp_genes` vector:
+
+Hint: Your vector should look like this in 'Environment':
+`chr [1:7] "OXTR" "ACTN3" "AR" "OPRM1" "CYP1A1" NA "APOA5"`. If not
+recreate the vector by running this expression:
+`snp_genes <- c("OXTR", "ACTN3", "AR", "OPRM1", "CYP1A1", NA, "APOA5")`
+
+a\. Create a new version of `snp_genes` that does not contain CYP1A1 and
+then\
+b. Add 2 NA values to the end of `snp_genes`
+
+## **Review Exercise 4**
+
+Using indexing, create a new vector named `combined` that contains:
+
+-   The the 1st value in `snp_genes`
+
+-   The 1st value in `snps`
+
+-   The 1st value in `snp_chromosomes`
+
+-   The 1st value in `snp_positions`
+
+## **Review Exercise 5**
+
+What type of data is `combined`?
+
+# Extra Material
 
 ## %in%
 
