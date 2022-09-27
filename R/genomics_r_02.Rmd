@@ -39,15 +39,23 @@ Now let's read in the file `combined_tidy_vcf.csv`
 ```{r read_in_data}
 # use getwd() to show where we are 
 
-## read in a CSV file and save it as 'variants'
+## read in a CSV file which we download at the start (rawdata/combined_tidy_vcf.csv) and assigning it to object 'variants'
 variants <- read.csv(file.path("rawdata","combined_tidy_vcf.csv"))
 ```
 
-Use View() function to bring up inbuilt data frame viewer
+Use `View()`function to bring up inbuilt data frame viewer
 
 ```{r view_data}
+# View variants
 View(variants)
 ```
+
+**Note**: This data is variant call data for an sequencing experiments
+examining mutation rates between hypermutable and non-hypermutable
+strains of *E. coli* strains see more information
+[here](https://datacarpentry.org/genomics-r-intro/02-data-prelude/index.html)
+
+The data is now stored in a data frame object variants.
 
 ## Summarizing and determining the structure of a data frame.
 
@@ -67,13 +75,21 @@ Let's examine what each of these functions can tell us:
 summary(variants)
 ```
 
-Our data frame had 29 variables, so we get 29 fields that summarize the
-data.
+Our data frame had 29 variables (columns), so we get 29 fields that
+summarize the data.
 
 The `QUAL`, `IMF`, and `VDB` variables (and several others) are
-numerical data and so you get summary statistics on the min and max
-values for these columns, as well as mean, median, and interquartile
-ranges.
+numerical data and so you get summary statistics on the
+
+-   min
+
+-   max
+
+-   mean,
+
+-   median
+
+-   interquartile ranges (IQR).
 
 Many of the other variables (e.g. `sample_id`) are treated as characters
 data (more on this in a bit).
@@ -84,7 +100,7 @@ Now, let's use the `str()` (structure) function to look a little more
 closely at how data frames work:
 
 ```{r str}
-# Use str() function on the variants data frame.
+# Use the str() function on the variants data frame.
 str(variants)
 ```
 
@@ -94,11 +110,13 @@ Ok, thats a lot up unpack! Some things to notice.
     with its dimensions, in this case 801 observations (rows) and 4
     variables (columns)
 
--   Each variable (column) has a name (e.g. `sample_id`). This is
-    followed by the object mode (e.g. chr, int, etc.). Notice that
-    before each variable name there is a `$` -
+-   Each variable (column) has a name (e.g. `sample_id`).
 
-We can use the \$ symbol to extract a single column of a data frame
+    -   This is followed by the object mode (e.g. chr, int, etc.).
+
+    -   Notice that before each variable name there is a `$`
+
+We can use the `$` symbol to extract a single column of a data frame
 
 `<object_name>$<column_name>`
 
@@ -112,21 +130,27 @@ To get the CHROM column
 
 ### Skimr
 
-A really usefull function is `skim()` from the
+A really useful function is `skim()` from the
 [skimr](https://cran.r-project.org/web/packages/skimr/index.html)
-package
+package. Packages are extra code libraries that extend the functionality
+of R.
 
 ```{r}
-skimr::skim(variants)
+# install package skimr
+# load skimr library
+# use skim fucntion of variants dataframe
+install.packages("skimr")
+library(skimr)
+skim(variants)
 ```
 
 ## Introducing Factors
 
-Factors are the final major data structure we will introduce in our R
+`Factors` are the final major data structure we will introduce in our R
 genomics lessons.
 
-Factors can be thought of as vectors which are specialized for
-categorical data.
+`Factors` can be thought of as `vectors` which are specialized for
+**categorical data**.
 
 We can convert a character vector to factor using the function
 `as.factor()`
@@ -139,7 +163,7 @@ variants$REF<-as.factor(REF)
 str(variants$REF)
 ```
 
-Extract the `fct` column REF to a new object using `$ syntax`
+Extract the `factor` column REF to a new object using `$ syntax`
 
 ```{r}
 # subset the fct column REF to a new object using $ and save it object REF
@@ -156,16 +180,15 @@ head(REF)
 
 # Plotting
 
-One of the most common uses for factors will be when you plot
-categorical values.
+A common uses for factors will be when you plot categorical values.
 
 For example, suppose we want to know how many of our variants had each
-possible nucleotide
+possible reference nucleotide
 
 (or nucleotide combination) in the reference genome? We could generate a
 plot:
 
-Plot REF using the `plot()` function
+Plot `REF` using the base R's `plot()` function
 
 ```{r plotting}
 # Plot REF using the plot() function
@@ -179,9 +202,11 @@ really useful functions to manage factors. Extra (forcats
 )[<https://forcats.tidyverse.org/>]
 
 ```{r forcats}
-plot(forcats::fct_lump(REF,n=5))
+# load library forcats
+# examples
+plot(fct_lump(REF,n=5))
 #
-plot(forcats::fct_infreq(forcats::fct_lump(REF,n=5)))
+plot(forcats::fct_infreq(fct_lump(REF,n=5)))
 ```
 
 Back to data frames
@@ -201,7 +226,7 @@ The key differences include:
 Subset the first row and column of variants data frame.
 
 ```{r}
-# Subset the first row and column of variants data frame using [<rows>,<columns>] notation.
+# Subset the first row and 1st column of variants data frame using [<rows>,<columns>] notation.
 variants[1,1]
 ```
 
@@ -232,6 +257,19 @@ Index using the name of a column(s) by passing them as vectors using
 variants[1:5,c("POS")]
 ```
 
+## Exercise Subsetting data frames and Factors
+
+Try subsetting the data frame **variants**
+
+1.  Retrieve the last row and last column
+2.  Retrieve the `INDEL` column by name
+3.  Retrieve the last item, 801th, in the INDEL column
+4.  Convert the INDEL column to a factor and plot.
+
+```{r}
+
+```
+
 ## Subsetting using logical statements
 
 We can use logical statements to filter out data frames as well
@@ -248,10 +286,10 @@ You can create a new data frame object by assigning them to a new object
 name
 
 Create a new data frame from variants object containing only
-observations from sample_id SRR2584863
+observations from `sample_id` `SRR2584863`
 
 ```{r }
-# Create a new data frame, SRR2584863_variants   ,from variants object containing only observations from sample_id SRR2584863
+# Create a new data frame, SRR2584863_variants from variants object containing only observations from sample_id SRR2584863
 
 SRR2584863_variants <-variants[variants$sample_id=="SRR2584863",]
 ```
@@ -281,6 +319,7 @@ There are lots of arithmetic functions you may want to apply to your
 data frame, covering those would be a course in itself (there is some
 starting material
 [here](https://swcarpentry.github.io/r-novice-inflammation/15-supp-loops-in-depth/)).
+
 Our lessons will cover some additional summary statistical functions in
 a subsequent lesson, but overall we will focus on data cleaning and
 visualization.
@@ -324,7 +363,15 @@ colnames(variants)[colnames(variants) == "sample_id"] <- "strain"
 colnames(variants)
 ```
 
-```{}
+## Exercise, subsetting using logicals and maths opertations
+
+1.  What is the maximum mapping quality `MQ` in the variants data frame.
+2.  What is the mean depth `DP`in the variants data frame.
+3.  Use logical filtering to extract those variants with the maximum
+    `MQ`
+
+```{r answers}
+
 ```
 
 ## Saving your data frame to a file
@@ -336,7 +383,7 @@ object to a .csv using the functions
 -   `file.path()`
 
 ```{r write_csv}
-#Save SRR2584863_variants object  to a file using write.csv
+#Save SRR2584863_variants object  to a file data/SRR2584863_variants.csv using write.csv
 write.csv(x = SRR2584863_variants, file = file.path("../","data","SRR2584863_variants.csv"))
 ```
 

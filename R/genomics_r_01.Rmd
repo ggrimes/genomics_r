@@ -47,9 +47,14 @@ download.file(url = "https://ndownloader.figshare.com/files/14632895",destfile =
 
 ## Using functions in R, without needing to master them
 
-`?` `args()`
+There are a few ways to get help with an R function
+
+1\. `?args()`
+
+2.  use`args()` function around a function`args(round())`
 
 ```{r getting_help}
+# get help with args function
 #?
 #args()
 ?getwd()
@@ -58,10 +63,11 @@ args(round)
 
 ## RStudio contextual help
 
-start typing function `round()` and use tab
+RStudio also provides contextual help. Start typing function `round()`
+and use tab
 
 ```{r rstudio_help}
-# ?round()
+# get contextual help for round()
 # round(3.14)
 # round(3.14,1)
 ```
@@ -105,8 +111,8 @@ start typing function `round()` and use tab
 
 ## Creating objects in R
 
-What might be called a `variable` in many languages is called an
-**object** in R.
+What might be called a `variable` in many languages, such as python, is
+called an **object** in R.
 
 **To create an object you need:**
 
@@ -114,7 +120,7 @@ What might be called a `variable` in many languages is called an
 
 -   a value (e.g. `1`)
 
--   the assignment operator (`<-`)
+-   the assignment operator (`<-`) you can also use an `=`
 
 This line creates the object 'a' and assigns it the value '1'
 
@@ -135,6 +141,7 @@ gene_name="PTEN"
 
 ```{r}
 # Create an object that has the value of number of pairs of human chromosomes
+# If not already create an object gene_name with the value of a gene symbol
 chr_num=23
 ```
 
@@ -181,6 +188,7 @@ object, which may or may not be a good thing depending on how you look
 at it.
 
 ```{r}
+# print contents of object gene _name
 # gene_name has the value 'pten' or whatever value you used in the challenge.
 # We will now assign the new value 'TP53'
 gene_name
@@ -202,7 +210,8 @@ display the contents of that object.
 In this case, we are told the object no longer exists.
 
 ```{r}
-gene
+# print content of gene_name to screen
+gene_name
 ```
 
 ## Understanding object data types (modes)
@@ -237,21 +246,22 @@ mode('a')
 mode('1')
 ```
 
--   Logical Boolean values - TRUE or FALSE
+-   Logical Boolean values - `TRUE` or `FALSE`
 
 ```{r logicals}
 mode(FALSE)
 mode(TRUE)
 ```
 
-There are a few other modes (i.e. "complex", "raw" etc.) but these are
-the three we will work with in this lesson.
+There are a few other modes (i.e. "`complex`", "`raw`" etc.) but these
+are the three we will work with in this lesson.
 
 \
 **Exercise: Create objects and check their modes**
 
 ```{r}
-#Create the following objects in R, then use the mode() function to verify their modes. Try to guess what the mode will be before you look at the solution
+#Create the following objects in R, then use the mode() function to verify their modes. 
+# Try to guess what the mode will be before you look at the solution
 
 chromosome_name <- 'chr02'
 od_600_value <- 0.47
@@ -282,25 +292,26 @@ interpreted by R) a numeric object:
 ```{r}
 # assign  numeric vale of 23 to object human_chr_number
 human_chr_number =23
-# multiply the object 'human_chr_number' by 2
+# multiply, * ,the object 'human_chr_number' by 2
 human_chr_number * 2
 ```
 
 ## Vectors
 
-Vectors are probably the most used commonly used object type in R.
+**`Vectors`** are probably the most used commonly used object type in R.
 
-A vector is a collection of values that are all of the same type
-(numbers, characters, etc.).
+A vector is a [collection]{.ul} of values that are [**all of the same
+typ**]{.ul}**e** (numbers, characters, etc.).
 
-One of the most common ways to create a vector is to use the `c()`
-function - the "concatenate" or "combine" function.
+One of the most common ways to create a vector is to use the
+
+`c()` function - the "concatenate" or "combine" function.
 
 Inside the function you may enter one or more values; for multiple
 values, separate each value with a comma:
 
-Create the vector snp_genes using these gene names "OXTR", "ACTN3",
-"AR", "OPRM1"
+Create the vector `snp_genes` using these gene names "OXTR", "ACTN3",
+"AR", "OPRM1" using the `c()` function
 
 ```{r create_vector}
 # Create the SNP gene name vector with values "OXTR", "ACTN3", "AR", "OPRM1"
@@ -324,7 +335,7 @@ Another useful function that gives both of these pieces of information
 is the `str()` (structure) function.
 
 ```{r str}
-?str()
+# Use the function str() on vector snp_genes
 str(snp_genes)
 ```
 
@@ -341,10 +352,16 @@ Let's create a few more vectors to play around with:
 ```{r create_vectors}
 #Some interesting human SNPs
 #while accuracy is important, typos in the data won't hurt you here
+
+#snps object containing rs53576, rs1815739, rs6152, rs1799971
 snps <- c('rs53576', 'rs1815739', 'rs6152', 'rs1799971')
+# snp_chromosomes containing 3, 11, X, 6
 snp_chromosomes <- c('3', '11', 'X', '6')
+# snp _positions containing 8762685, 66560624, 67545785, 154039662
 snp_positions <- c(8762685, 66560624, 67545785, 154039662)
 ```
+
+## Retrieve values from a vector
 
 Once we have vectors, one thing we may want to do is specifically
 retrieve one or more values from our vector.
@@ -358,16 +375,19 @@ bracket as follows:
 
 [**In R index start from**]{.ul} 1
 
-Get the 3rd value in the snp_genes vector
+Get the 3rd value in the `snp_genes` vector
 
 ```{r subset_vector_by_index}
 # get the 3rd value in the snp_genes vector
 snp_genes[3]
 ```
 
+#### Using Ranges 
+
 In R, every item your vector is indexed, starting from the first item
-(1) through to the final number of items in your vector. You can also
-retrieve a range of numbers:
+(1) through to the final number of items in your vector.
+
+You can also retrieve a range of numbers: `<start_num>:<end_num>`
 
 ```{r number_range}
 # get the 1st through 3rd value in the snp_genes vector
@@ -393,7 +413,7 @@ examples](https://thomasleeper.com/Rcourse/Tutorials/vectorindexing.html)).
 Also, several of these subsetting expressions can be combined:
 
 ```{r}
-# get the 1st through the 3rd value, and 4th value in the snp_genes vector
+# get the 1st through the 3rd value using range operator, and 4th value in the snp_genes vector
 # yes, this is a little silly in a vector of only 4 values.
 snp_genes[c(1:3,4)]
 ```
@@ -407,12 +427,17 @@ To do so, you can use the `c()` function again to add your new value:
 Add the gene `'CYP1A1'`and `'APOA5'`to our list of snp genes.
 
 ```{r add_data_to_vector}
-# add the gene 'CYP1A1' and 'APOA5' to our list of snp genes
-snp_genes
+# display current contents of snp_genes
+
+# add the gene 'CYP1A1' and 'APOA5' to our vector of snp genes
 # this overwrites our existing vector
 snp_genes<-c(snp_genes,"CYP1A1","APOA5")
+
+# use length() function on snp_genes()
 length(snp_genes)
 ```
+
+#### Negative indexes
 
 Using a negative index `-` will return a version a vector with that
 index's value removed:
@@ -420,9 +445,10 @@ index's value removed:
 Remove the sixth entry from snp_genes vector.
 
 ```{r }
-# Remove the sixth entry from snp_genes vector
-snp_genes
+#display contents of snp_genes and length()
+# Remove the sixth entry from snp_genes vector, don't assign
 snp_genes[-6]
+# use length on snp_genes
 
 ```
 
@@ -430,22 +456,28 @@ We can remove that value from our vector by overwriting it with this
 expression:
 
 ```{r}
+# assign snp_genes to ovject snp_genes_bak
 snp_genes_bak<-snp_genes
+# remove 6th element of vector snp_gene sand store in snp_genes
 snp_genes <- snp_genes[-6]
+# display contents of snp_genes and use length() 
 snp_genes
 ```
 
+#### Assigning by index
+
 We can also explicitly rename or add a value to our index using double
-bracket notation `[]` and assigment operatoor `<-`
+bracket notation `[]` and assigment operator `<-`
 
 ```{r vector_add_by_position}
-# add gene name  "APOA5" ad the 7th item of the vector
+# add gene name  "APOA5" ad the 7th item of the vector using [] notation
 snp_genes[7]<- "APOA5"
+# print contents and length
 snp_genes
 ```
 
 Notice in the operation above that R inserts an `NA` value to extend our
-vector so that the gene "APOA5" is an index 7.
+vector so that the gene "`APOA5`" is an index 7.
 
 This may be a good or not-so-good thing depending on how you use this
 
@@ -455,12 +487,13 @@ Answer the following questions to test your knowledge of vectors
 
 Which of the following are true of vectors in R?
 
-A) All vectors have a mode **or** a length\
-B) All vectors have a mode **and** a length\
-C) Vectors may have different lengths\
-D) Items within a vector may be of different modes\
-E) You can use the `c()` to add one or more items to an existing vector\
-F) You can use the `c()` to add a vector to an exiting vector
+A)  All vectors have a `mode` **or** a `length`\
+B)  All vectors have a `mode` **and** a `length`\
+C)  Vectors may have different lengths\
+D)  Items within a vector may be of different modes\
+E)  You can use the `c()` to add one or more items to an existing
+    vector\
+F)  You can use the `c()` to add a vector to an exiting vector
 
 > \
 
@@ -468,7 +501,7 @@ F) You can use the `c()` to add a vector to an exiting vector
 
 `TRUE` `FALSE`
 
-There is one last set of sub setting capabilities we want to introduce.
+There is one last set of subsetting capabilities we want to introduce.
 
 It is possible within R to retrieve items in a vector based on a logical
 evaluation or numerical comparison.
@@ -501,12 +534,12 @@ Some of the most common logical operators you will use in R are:
 Create a Logical vector of snp_positions \> 100000000
 
 ```{r create_logical_vector}
-# Create a Logical vector of snp_positions > 100000000
+# Create a Logical vector snp_pop_gt1M of snp_positions > 100000000
 snp_positions
 snp_positions > 100000000
 ```
 
-Use function `which()` to get index
+Use function `which()` to get index of `snp_pop_gt1M` vector
 
 ```{r logical_index}
 which(snp_positions > 100000000)
@@ -518,7 +551,7 @@ Finally, there are a few other common retrieve or replace operations you
 may want to know about.
 
 First, you can check to see if any of the values of your vector are
-missing (i.e. are NA).
+missing (i.e. are `NA`).
 
 The `is.NA()` function will return a logical vector with TRUE for any NA
 value:
@@ -535,14 +568,17 @@ is.na(snp_genes)
 
 ## **Review Exercise 1**
 
-What data types/modes are the following vectors? a. `snps`\
+What data types/modes are the following vectors?
+
+a\. `snps`\
 b. `snp_chromosomes`\
 c. `snp_positions`
 
 ## **Review Exercise 2**
 
-Add the following values to the specified vectors: a. To the `snps`
-vector add: 'rs662799'\
+Add the following values to the specified vectors:
+
+a\. To the `snps` vector add: 'rs662799'\
 b. To the `snp_chromosomes` vector add: 11\
 c. To the `snp_positions` vector add: 116792991
 
@@ -555,11 +591,10 @@ Hint: Your vector should look like this in 'Environment':
 recreate the vector by running this expression:
 `snp_genes <- c("OXTR", "ACTN3", "AR", "OPRM1", "CYP1A1", NA, "APOA5")`
 
-a\. Create a new version of `snp_genes` that does not contain CYP1A1 and
-then\
-b. Add 2 NA values to the end of `snp_genes`
+a\. Create a new version of `snp_genes` that does not contain `CYP1A1`
+and then\
 
-## **Review Exercise 4**
+## **Extra List: Review Exercise 4**
 
 Using indexing, create a new vector named `combined` that contains:
 
@@ -662,11 +697,12 @@ snp_data$position[1]
     your data with with about a day's worth of training
 
 -   It is important to understand how data are organized by R in a given
-    object type and how the mode of that type (e.g. numeric, character,
-    logical, etc.) will determine how R will operate on that data.
+    object type and how the mode of that type (e.g. `numeric`,
+    `character`, logical, etc.) will determine how R will operate on
+    that data.
 
 -   Working with vectors effectively prepares you for understanding how
-    data are organized in R. \`\`\`
+    data are organized in R.
 
 ## Exercises
 

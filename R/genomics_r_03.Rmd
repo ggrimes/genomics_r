@@ -77,12 +77,12 @@ packages give you access to more functions.
 
 You need to install a package and then load it to be able to use it
 
-```{r install_dplyr}
-install.packages("dplyr") ## installs dplyr package
-install.packages("readr") ## install readr pacakge
+```{r}
+## installs dplyr package
+## install readr package
+install.packages("dplyr") 
+install.packages("readr") 
 ```
-
-Read in `combined_tidy_vcf.csv`
 
 ## **What is dplyr?**
 
@@ -154,9 +154,12 @@ Enter `dplyr`!
 
 #### **How to `select()`** columns
 
-To select columns of a data frame, use `select()`. The first argument to
-this function is the data frame (`variants`), and the subsequent
-arguments are the columns to keep.
+To select columns of a data frame, use dplyr's `select()` function.
+
+The first argument to this function is the data frame (`variants`), and
+the subsequent arguments are the columns to keep.
+
+**Note, In tidyverse, e.g. dplyr we do not quote "" column names**
 
 ```{r dplyr_select}
 #select sample_id, REF, ALT, DP from variants df
@@ -175,22 +178,41 @@ select all but CHROM column
 select(variants_tbl, -CHROM)
 ```
 
-`dplyr` also provides useful functions to select columns based on their
-names. For instance, ends_with()
+## [selection helpers](https://noteable.edina.ac.uk/user/jggyj4w4chknqatfm2ddvp/rstudio/help/library/tidyselect/help/language)
 
-select columns that end with B
+`dplyr` also provides useful functions to select columns based on their
+names.
+
+-   [`starts_with()`](https://noteable.edina.ac.uk/user/jggyj4w4chknqatfm2ddvp/rstudio/help/library/tidyselect/help/starts_with):
+    Starts with a prefix.
+
+-   [`ends_with()`](https://noteable.edina.ac.uk/user/jggyj4w4chknqatfm2ddvp/rstudio/help/library/tidyselect/help/ends_with):
+    Ends with a suffix.
+
+-   [`contains()`](https://noteable.edina.ac.uk/user/jggyj4w4chknqatfm2ddvp/rstudio/help/library/tidyselect/help/contains):
+    Contains a literal string.
+
+-   [`matches()`](https://noteable.edina.ac.uk/user/jggyj4w4chknqatfm2ddvp/rstudio/help/library/tidyselect/help/matches):
+    Matches a regular expression.
+
+-   [`num_range()`](https://noteable.edina.ac.uk/user/jggyj4w4chknqatfm2ddvp/rstudio/help/library/tidyselect/help/num_range):
+    Matches a numerical range like x01, x02, x03.
+
+For instance, `ends_with()`
 
 ```{r dplyr_ends_with}
+# select columns that end with B
 select(variants_tbl, ends_with("B"))
 ```
 
 ## **Exercise**
 
-From the `variants_tbl` Create a table that contains all the columns
-with the letter "`i`" and column "`POS`", without columns "**Indiv**"
-and "**FILTER**".
+From the `variants_tbl`
 
-Hint: look at the help function `conatins()` we've just covered.
+1.  Create a table that `contains` all the columns with the letter "`i`"
+    and column "`POS`", [without]{.ul} columns "`Indiv`" and "`FILTER`".
+
+Hint: look at the help function `contains()`
 
 ```{r}
 
@@ -212,6 +234,7 @@ Note that this is equivalent to the base R code below, but is easier to
 read!
 
 ```{r r_base_filter}
+# base R code
 variants_tbl[variants_tbl$sample_id == "SRR2584863",]
 ```
 
@@ -233,31 +256,33 @@ filter(variants_tbl,INDEL==TRUE)
 
 `filter()` allows you to combine multiple conditions.
 
-You can separate them using a `,` as arguments to the function, they
-will be combined using the `&` (AND) logical operator.
+You can separate them using a comma `,` as arguments to the function,
+
+they will be combined using the `&` (AND) logical operator.
 
 If you need to use the `|` (OR) logical operator, you can specify it
 explicitly:
 
 ```{r}
-# this is equivalent to:
-#   filter(variants, sample_id == "SRR2584863" & QUAL >= 100)
+# filter variants_tbl
+# filter variants_tbl using for sample_id SRR2584863 and QUAL score >= 100
+sample_id == "SRR2584863" & QUAL >= 100)
 filter(variants, sample_id == "SRR2584863", QUAL >= 100)
 ```
 
 ```{r}
 # using `|` logical operator
-filter(variants, sample_id == "SRR2584863", (INDEL | QUAL >= 100))
+# filter variants_tbl for sample_id SRR2584863 and (variants is INDEL or QUAL score >= 100)
+filter(variants_tbl, sample_id == "SRR2584863", (INDEL | QUAL >= 100))
 ```
 
-## **Challenge**
+## **Exercise: dplyr filter**
 
 `filter` for all the mutations in the `variants_tbl` that occurred
 between
 
-the positions (`POS`) `1e6` (one million) and `2e6`(included)
-
-have `QUAL` greater than 200.
+1.  the positions (`POS`) `1e6` (one million) and `2e6`(included)
+2.  Alos have `QUAL` greater than 200.
 
 ```{r}
 
@@ -269,24 +294,19 @@ But what if you wanted to `select` and `filter`?
 
 We can do this with pipes.
 
-Pipes, are a fairly recent addition to R.
-
 Pipes let you take the output of one function and send it directly to
-the next, which is useful when you need to many things to the same data
-set.
+the next
 
-It was possible to do this before pipes were added to R, but it was much
-messier and more difficult.
-
-Pipes in R look like `|>` ; Previous only available via the magrittr
-package, which is installed as part of dply.
+Pipes in R look like `|>` ; Previous only available via the `magrittr`
+package, which is installed as part of dplyr using `%>%`.
 
 Use pipes together with select and filter to get `REF`, `ALT`, `DP`
 columns for `sample_id` `SRR2584863`
 
 ```{r pipe_example}
-# Use pipes together with select and filter to get REF, ALT, DP columns for sample_id SRR2584863
-variants_tbl|>
+# Use pipes together with select and filter to get REF, ALT, DP columns 
+# for sample_id SRR2584863
+variants_tbl |>
   filter(sample_id == "SRR2584863")|>
   select(REF, ALT, DP)
 ```
@@ -300,7 +320,7 @@ SRR2584863_variants <- variants_tbl |>
   filter(sample_id == "SRR2584863") |>
   select(REF, ALT, DP)
 
-# SRR2584863_variants
+# print SRR2584863_variants
 SRR2584863_variants
 ```
 
@@ -309,9 +329,8 @@ SRR2584863_variants
 Starting with the `variants` dataframe, use pipes `|>` to subset the
 data to include only observations from `SRR2584863` sample,
 
-where the filtered depth (`DP`) is at least 10.
-
-Retain only the columns `REF`, `ALT`, and `POS`.
+1.  Where the filtered depth (`DP`) is at least 10.
+2.  Retain only the columns `REF`, `ALT`, and `POS`.
 
 ```{r exercise answer}
 
@@ -320,12 +339,14 @@ Retain only the columns `REF`, `ALT`, and `POS`.
 ## Adding a column, Mutate
 
 Frequently you'll want to create new columns based on the values in
-existing columns, for example to do unit conversions or find the ratio
-of values in two columns.
+existing columns,
+
+for example to do unit conversions or find the ratio of values in two
+columns.
 
 For this we'll use the `dplyr` function `mutate()`.
 
-We have a column titled "QUAL".
+We have a column titled "`QUAL`".
 
 This is a Phred-scaled confidence score that a polymorphism exists at
 this position given the sequencing data.
@@ -351,9 +372,10 @@ variants_tbl %>%
 ## **Exercise**
 
 There are a lot of columns in our dataset, so let's just look at the
-`sample_id`, `POS`, `QUAL`, and `POLPROB` columns for now. Add a line to
-the below code to only show those columns and show the output via
-`glimpse()`.
+
+`sample_id`, `POS`, `QUAL`, and `POLPROB` columns for now.
+
+Add a line to the below code to only show those columns.
 
 ```{r exercise_answer}
 variants %>%
@@ -362,9 +384,10 @@ variants %>%
 
 ### Extra
 
-Let's create a new column, called "indel_size" that contains the size
-difference between the our sequences and the reference genome. The
-function, nchar() returns the number of letters in a string.
+Let's create a new column, called "`indel_size`" that contains the size
+difference between the our sequences and the reference genome.
+
+The function, `nchar()` returns the number of letters in a string.
 
 ```{r}
 variants_tbl %>%
@@ -392,7 +415,7 @@ Many data analysis tasks can be approached using the
 2.  `apply` some analysis to each group,
 3.  and then `combine` the results. dplyr makes
 
-this very easy through the use of the
+This very easy through the use of the
 
 `group_by()`function, which splits the data into groups.
 
@@ -429,7 +452,7 @@ These are called "built-in functions" because they come with R and don't
 require that you install any additional packages.
 
 ```{r group_by}
-# So to view the highest (max()) filtered depth (DP) for each sample (sample_id):
+# View the highest (max()) filtered depth (DP) for each sample (sample_id):
 variants %>%
   group_by(sample_id) %>%
   summarize(max(DP))
@@ -447,13 +470,14 @@ variants_indel %>%
 
 ## Exporting
 
-We can export this new dataset using write_csv():
+We can export this new dataset using `readr` function `write_csv()`:
 
-write object variants_indel to a csv file in the data directory
+write updated object `variants` to a csv file in the data directory
 
 ```{r write_csv}
+# write object variants_indel to file data/variants_indel.csv
   getwd()
-  write.csv(variants_indel, file.path("../","data","variants_indel.csv"))
+  write.csv(variants_tbl, file.path("../","data","variants_processed.csv"))
 ```
 
 ### **Note: Handling Missing Values In Data**

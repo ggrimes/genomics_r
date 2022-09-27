@@ -7,12 +7,13 @@ editor_options:
     wrap: 72
 ---
 
-In this final lesson you will use the R package ggplot2 to visualise
+In this final lesson you will use the R package ggplot2 to visualize
 your data.
 
 We start by loading the package ggplot2.
 
 ```{r load_ggplot2}
+# load library ggplot2
 library(ggplot2)
 ```
 
@@ -36,8 +37,12 @@ ggplot2 functions like data in the '`long`' format,
 
 -   A row for every observation.
 
+    ![](images/longwide.png)
+
 Well-structured data will save you lots of time when making figures with
 ggplot2
+
+## Constructing ggplots
 
 ggplot graphics are built step by step by adding new elements.
 
@@ -49,11 +54,13 @@ used for different types of plots:
 
     ggplot(data = <DATA>, mapping = aes(<MAPPINGS>)) +  <GEOM_FUNCTION>()
 
+![](images/ggplot2_simplified.webp)
+
 use the `ggplot()` function and bind the plot to a specific data frame
 using the data argument
 
 ```{r ggplot_01}
-#use the ggplot() function and bind the plot to a specific data frame using the data argument
+#use the ggplot() function and bind the variants data's POS to x axis and DP to y axis 
 ggplot(data = variants, aes(x = POS, y = DP))
 ```
 
@@ -64,18 +71,22 @@ This produces an empty plot with just the axes
 ggplot2 uses `geoms` as graphical representations of the data in the
 plot (points, lines, bars).
 
-ggplot2 offers many different `geoms`; we will use some common ones
-today, including:
+Some `geoms` below
+
+![](images/geoms.png){width="602"}
+
+As seen above ggplot2 offers many different `geoms`; we will use some
+common ones today, including:
 
 -   `geom_point()` for scatter plots, dot plots, etc.
--   `geom_boxplot()` for, , boxplots
--   `geom_line()` for trend lines, time series, etc.
+-   `geom_bar()` for barplots
+-   `geom_density()` for density plots
+
+### Adding geoms
 
 To add a `geom` to the plot use the `+` operator.
 
-Because we have two continuous variables `POS` and `DP`,
-
-let's use
+Because we have two continuous variables `POS` and `DP`, we will use
 [`geom_point()`](https://ggplot2.tidyverse.org/reference/geom_point.html)first
 to create a scatterplot:
 
@@ -118,6 +129,35 @@ a geom
 
 Then, we start modifying this plot to extract more information from it.
 
+To see what we can can change we can look at the geom_points webpage
+[here](https://ggplot2.tidyverse.org/reference/geom_point.html)
+
+So we can use geom_point **Aesthetics**
+
+-   **`x`**
+
+-   **`y`**
+
+-   `alpha`
+
+-   `colour`
+
+-   `fill`
+
+-   `group`
+
+-   `shape`
+
+-   `size`
+
+-   `stroke`
+
+The aesthetics `x` and `y` have already been mapped to `POS` and `DP` in
+our ggplot2 object.
+
+We can either map some variables to one of the remaining **Aesthetics**
+or provide a single value.
+
 For instance, we can add transparency (`alpha`) to avoid over plotting:
 
 ```{r ggplot_int_02}
@@ -136,14 +176,13 @@ We can also add colors for all the points:
     geom_point(alpha = 0.5, color = "blue")
 ```
 
-Or to color each species in the plot differently,
+We could also map the variable `sample_id` to the aes to assign the
+color to a species.
 
-you could use a vector as an input to the argument color.
+ggplot2 will provide a different color corresponding to different
+values.
 
-ggplot2 will provide a different color corresponding to different values
-in the vector.
-
-Here is an example where we color with sample_id:
+Here is an example where we map the aes `color` with `sample_id`:
 
 ```{r ggplot_it_04}
 # use sample_id to assign color in the mapping aes
@@ -154,8 +193,11 @@ ggplot(data = variants, aes(x = POS, y = DP, color = sample_id)) +
 geom_point(alpha = 0.5)
 ```
 
+## Labelling plots
+
 To make our plot more readable, we can add axis labels using the ggplot
-`labs function`:
+helper function
+[`labs`](https://ggplot2.tidyverse.org/reference/labs.html)`()`:
 
 x = "Base Pair Position"
 
@@ -170,17 +212,19 @@ y = "Read Depth (DP)"
        y = "Read Depth (DP)")
 ```
 
-To add a main title "Read Depth vs. Position" to the plot, we use
-[`ggtitle()`](https://ggplot2.tidyverse.org/reference/labs.html):
+To add a main title "Read Depth vs. Position" to the plot, we use labs()
+parameter title
 
 ```{r}
-# add main title using ggtitle
+# add main title using labs parameter title "Read Depth vs. Position
 ggplot(data = variants, aes(x = POS, y = DP, color = sample_id)) +
   geom_point(alpha = 0.5) +
   labs(x = "Base Pair Position",
-       y = "Read Depth (DP)") +
-  ggtitle("Read Depth vs. Position")
+       y = "Read Depth (DP)",
+       title("Read Depth vs. Position")
 ```
+
+## Saving ggplots
 
 Now the figure is complete and ready to be exported and saved to a file.
 
@@ -203,11 +247,21 @@ ggsave ("results/depth.pdf", width = 6, height = 4)
 ggsave ("results/depth.jpeg", width = 6, height = 4)
 ```
 
+## **Exercise: scatterplots**
+
+Use what you just learned to create a ggplot scatter plot (geom_point)
+of y PHRED scaled quality (`QUAL`) over x position (`POS`) with the
+`sample_id` showing in different colors.
+
+```{r}
+
+```
+
 ## Faceting
 
 `ggplot2` has a special technique called faceting that allows the user
-to split one plot into multiple plots based on a factor included in the
-dataset.
+to split one plot into multiple plots based on a variable included in
+the dataset.
 
 Sometime this is referred to as [small
 multiples](https://en.wikipedia.org/wiki/Small_multiple)
@@ -243,11 +297,9 @@ ggplot(data = variants, aes(x = POS, y = MQ, color = sample_id)) +
  facet_grid(sample_id~.)
 ```
 
-## **Challenge**
+## **Exercise**
 
-Use what you just learned to create a scatter plot of PHRED scaled
-quality (`QUAL`) over position (`POS`) with the samples showing in
-different colors.
+Alter the plot from the previous exercise by faceting by rows.
 
 Make sure to give your plot relevant axis labels.
 
@@ -261,29 +313,44 @@ Make sure to give your plot relevant axis labels.
 
 # Barplots
 
-We can create barplots using the
+Another commonly used plot is the barplot to display the count of a
+discrete variable
+
+We can create barplots in ggplot2 using the
 [`geom_bar()`](https://ggplot2.tidyverse.org/reference/geom_bar.html)
 geom.
 
 `geom_bar` is designed to make it easy to create bar charts that show
 counts.
 
-This works best with discrete variables.
+In geom_bar the aes mapped to `x` is the variable for the count.
 
-Let's make a `barplot` showing the number of INDELs and SNV (`INDEL`)
-for each sample (`sample_id`).
+If you wish to flip the orientation use `y`
+
+Let's make a `barplot` showing the number of INDELs (`INDEL`) .
 
 ```{r ggplot_geom_bar}
 # make a bar plot using geom_bar
- ggplot(variants,aes(x=INDEL,fill=sample_id))+
+ ggplot(variants,aes(x=INDEL))+
   geom_bar()
 
 ```
 
-Note is you want to make a barchat based on a value using `geom_col`
+We can map another variable to the data using the aes `fill` ,
+
+for example to create a stacked bar chart using sample_id
 
 ```{r}
-# example
+# make a bar chart using geom_bar
+ ggplot(variants,aes(x=INDEL,fill=sample_id))+
+  geom_bar()
+```
+
+Note is you want to make a barchart based on a single value using geom
+`geom_col`
+
+```{r}
+# create bar chart for a value using geom_col
 variants %>% 
   group_by(sample_id) %>%
   summarise(mean_DP=mean(DP)) %>% 
@@ -295,8 +362,8 @@ variants %>%
 
 We can create density plots using the
 [`geom_density`](https://ggplot2.tidyverse.org/reference/geom_density.html)
-geom that shows the distribution of of a continous variable in the
-dataset.
+geom that shows the distribution of of a single continous variable in
+the dataset.
 
 Let's plot the distribution of variant depth `DP`
 
@@ -311,7 +378,18 @@ ggplot(data = variants, aes(x = DP)) +
 
 # Themes
 
-Usually plots with white background look more readable when printed.
+We can change the look of the ggplots using`themes()`
+
+This gives use greater control, however it is quite involved.
+
+![](images/theme_elements.png){width="702"}
+
+Therefore, ggplot has a number of built in themes.
+
+<https://ggplot2.tidyverse.org/reference/ggtheme.html>
+
+E.g. Usually plots with white background look more readable when
+printed.
 
 We can set the background to white using the function `theme_bw()`.
 
@@ -354,6 +432,8 @@ are worth exploring, such as
 
 -   [The R Graph Gallery](https://r-graph-gallery.com/) ([the
     book](https://bookdown.org/content/b298e479-b1ab-49fa-b83d-a57c2b034d49/))
+
+-   <https://www.cedricscherer.com/top/dataviz/>
 
 ## **Key Points**
 
