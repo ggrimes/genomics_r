@@ -391,6 +391,8 @@ Therefore, ggplot has a number of built in themes.
 E.g. Usually plots with white background look more readable when
 printed.
 
+![](images/visualization-themes-01.png)
+
 We can set the background to white using the function `theme_bw()`.
 
 ```{r ggplot_it_themes}

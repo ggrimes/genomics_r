@@ -57,17 +57,15 @@ read.
 Here we're going to cover some of the most commonly used functions as
 well as using pipes (`|>`) to combine them:
 
-1.  `glimpse()`
+1.  `select()`
 
-2.  `select()`
+2.  `filter()`
 
-3.  `filter()`
+3.  `group_by()`
 
-4.  `group_by()`
+4.  `summarize()`
 
-5.  `summarize()`
-
-6.  `mutate()`
+5.  `mutate()`
 
 Packages in R are sets of additional functions that let you do more
 stuff in R.

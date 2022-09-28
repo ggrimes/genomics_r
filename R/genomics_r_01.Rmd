@@ -3,8 +3,9 @@ title: "R Genomics: RStudio and R Basics"
 output:
   html_document:
     df_print: paged
+    code_folding: hide
 editor_options:
-  chunk_output_type: inline
+  chunk_output_type: console
   markdown: 
     wrap: 72
 ---
@@ -16,6 +17,7 @@ editor_options:
 Find out where you are using `getwd()`
 
 ```{r where_am_i}
+# lines beging with # are comments
 # Find out where you are using getwd()
 getwd()
 ```
@@ -51,7 +53,7 @@ There are a few ways to get help with an R function
 
 1\. `?args()`
 
-2.  use`args()` function around a function`args(round())`
+2.  use `args()` function around a function`args(round())`
 
 ```{r getting_help}
 # get help with args function
@@ -68,8 +70,8 @@ and use tab
 
 ```{r rstudio_help}
 # get contextual help for round()
-# round(3.14)
-# round(3.14,1)
+# round(3.15)
+# round(2.15,1)
 ```
 
 # R Basics
@@ -210,7 +212,7 @@ display the contents of that object.
 In this case, we are told the object no longer exists.
 
 ```{r}
-# print content of gene_name to screen
+# print content of object gene_name to screen
 gene_name
 ```
 
@@ -232,6 +234,7 @@ The most common modes you will encounter in R are:
 -   `numeric`: Numbers such floating point,decimals (1.0, 0.5, 3.14)
 
 ```{r numerics}
+#show modes of 1,1.1 and 1e6
 mode(1)
 mode(1.1)
 mode(1e6)
@@ -241,6 +244,7 @@ mode(1e6)
     quotes
 
 ```{r character}
+# show modes of "a",'a' and '1'
 mode("a")
 mode('a')
 mode('1')
@@ -249,6 +253,7 @@ mode('1')
 -   Logical Boolean values - `TRUE` or `FALSE`
 
 ```{r logicals}
+#show modes of TRUE and FALSE
 mode(FALSE)
 mode(TRUE)
 ```
@@ -256,11 +261,11 @@ mode(TRUE)
 There are a few other modes (i.e. "`complex`", "`raw`" etc.) but these
 are the three we will work with in this lesson.
 
-\
-**Exercise: Create objects and check their modes**
+## **Exercise: Create objects and check their modes**
 
 ```{r}
-#Create the following objects in R, then use the mode() function to verify their modes. 
+#Create the following objects in R, 
+# then use the mode() function to verify their modes. 
 # Try to guess what the mode will be before you look at the solution
 
 chromosome_name <- 'chr02'
@@ -283,6 +288,9 @@ R has a number of mathematical operators that you can use
 These can be used with literal numbers:
 
 ```{r mathematical_operations}
+# example maths operations
+2^2
+4/1.5
 (2^2)/1.5
 ```
 
@@ -303,6 +311,8 @@ human_chr_number * 2
 A vector is a [collection]{.ul} of values that are [**all of the same
 typ**]{.ul}**e** (numbers, characters, etc.).
 
+![](images/Vectors-in-R.jpeg){width="456"}
+
 One of the most common ways to create a vector is to use the
 
 `c()` function - the "concatenate" or "combine" function.
@@ -310,8 +320,12 @@ One of the most common ways to create a vector is to use the
 Inside the function you may enter one or more values; for multiple
 values, separate each value with a comma:
 
+For example
+
+`c(10, 20, 30, 40, 50, 60, 70, 80, 90, 100)`
+
 Create the vector `snp_genes` using these gene names "OXTR", "ACTN3",
-"AR", "OPRM1" using the `c()` function
+"AR", "OPRM1" using the `c()` function.
 
 ```{r create_vector}
 # Create the SNP gene name vector with values "OXTR", "ACTN3", "AR", "OPRM1"
@@ -375,6 +389,8 @@ bracket as follows:
 
 [**In R index start from**]{.ul} 1
 
+![](images/Vectors-in-R-01.jpeg)
+
 Get the 3rd value in the `snp_genes` vector
 
 ```{r subset_vector_by_index}
@@ -382,12 +398,16 @@ Get the 3rd value in the `snp_genes` vector
 snp_genes[3]
 ```
 
-#### Using Ranges 
+#### Using Ranges
 
 In R, every item your vector is indexed, starting from the first item
 (1) through to the final number of items in your vector.
 
 You can also retrieve a range of numbers: `<start_num>:<end_num>`
+
+For example, the numbers 1 to 10 can be defined as such;
+
+`1:10`
 
 ```{r number_range}
 # get the 1st through 3rd value in the snp_genes vector
@@ -494,8 +514,6 @@ D)  Items within a vector may be of different modes\
 E)  You can use the `c()` to add one or more items to an existing
     vector\
 F)  You can use the `c()` to add a vector to an exiting vector
-
-> \
 
 ## Logical Subsetting
 
@@ -701,9 +719,5 @@ snp_data$position[1]
     `character`, logical, etc.) will determine how R will operate on
     that data.
 
--   Working with vectors effectively prepares you for understanding how
-    data are organized in R.
-
-## Exercises
-
-<https://datacarpentry.org/genomics-r-intro/02-r-basics/index.html>
+-   Working with `vectors` effectively prepares you for understanding
+    how data are organized in R.
