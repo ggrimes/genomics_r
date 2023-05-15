@@ -459,7 +459,7 @@ R has a number of mathematical operators that you can use
 
 These can be used with literal numbers:
 
-``` {.{.{2^2}}}
+``` {.{.{.{2^2}}}}
 4/1.5
 (2^2)/1.5
 (1 + (5 ** 0.5))/2
@@ -721,9 +721,6 @@ Example
 
     # if you are looking for more than one value, you must pass this as a vector
 
-```{}
-```
-
 ------------------------------------------------------------------------
 
 ## **Review Exercise 1**
@@ -788,16 +785,10 @@ What type of data is `combined`?
 
 # Extra Material
 
-```{}
-```
-
 ## Lists
 
 Lists are quite useful in R, but we won't be using them in the genomics
 lessons.
-
-That said, you may come across lists in the way that some bioinformatics
-programs may store and/or return data to you.
 
 One of the key attributes of a list is that, unlike a vector, a list may
 contain data of more than one mode.
@@ -806,11 +797,6 @@ In this one example, we will create a named list and show you how to
 retrieve items from the list.
 
 Create a named list using the `list()` function and our SNP examples
-
-Note, for easy reading we have placed each item in the list on a
-separate line
-
-Nothing special about this, you can do this for any multiline commands
 
 To run this command, make sure the entire command (all 4 lines) are
 highlighted before running.
@@ -835,17 +821,12 @@ snp_data <- list(genes = snp_genes,
 To get all the values for the position object in the list, we use the
 `$` notation:
 
-Return all the values of position object
-
-```{=#Get position by name $}
-snp_data$position
-mode(snp_data$position)
-```
+Q. Return all the values of `position` object
 
 To get the first value in the position object, use the `[]` notation to
 index:
 
-```{snp_data$position[1]}
+``` {.{snp_data$position[1]}}
 ```
 
 ------------------------------------------------------------------------
