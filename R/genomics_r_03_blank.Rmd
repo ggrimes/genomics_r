@@ -570,6 +570,8 @@ require that you install any additional packages.
 It can sometimes be useful to transform the "long" tidy format, into the
 wide format.
 
+![](images/wide_long.png){width="480"}
+
 This transformation can be done with the `pivot_wider()` function
 provided by the `tidyr` package (also part of the `tidyverse`).
 
@@ -579,6 +581,8 @@ arguments:
 1.  the column name that will become the columns and
 
 2.  the column name that will become the cells in the wide data.
+
+3.  ![](images/pivot_wider.png){width="519"}
 
 ```{r}
 variants_wide <- variants %>%
@@ -597,7 +601,12 @@ We specify the names of the new columns,
 and here add `-CHROM` as this column shouldn't be affected by the
 reshaping:
 
+![](images/pivot_longer.png)
+
 ```{r}
+# convert variants wide back to long using pivot_long
+variants_wide %>%
+  pivot_longer(-CHROM, names_to = "sample_id", values_to = "mean_DP")
 
 ```
 
