@@ -893,3 +893,9 @@ index:
 
 -   Working with `vectors` effectively prepares you for understanding
     how data are organized in R.
+
+# Introduction to the example dataset and file type
+
+<https://datacarpentry.org/genomics-r-intro/02-data-prelude.html>
+
+slides
