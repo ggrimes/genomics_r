@@ -43,9 +43,10 @@ unknown way).
 
 **2) Keep spreadsheet data Tidy**
 
-The simplest principle of **Tidy data** is that we have one row in our
-spreadsheet for each observation or sample, and one column for every
-variable that we measure or report on.
+The simplest principle of **Tidy data** is that we have
+
+1.  **One row** in our spreadsheet for each observation or sample,
+2.  and **One column** for every variable that we measure or report on.
 
 As simple as this sounds, it's very easily violated.
 
@@ -106,10 +107,13 @@ calling workflow.
 
 We will need to load the sheet using a function called `read.csv()`.
 
-Now let's read in the file `combined_tidy_vcf.csv`
+Now let's read in the file `combined_tidy_vcf.csv` and assign to new
+object `variants`
 
 ```{r}
-# read in file combined_tidy_vcf.csv using read.csv()
+# a list bit on filepaths getwd(), dir()
+
+# read in file combined_tidy_vcf.csv using read.csv() assign as obj variant
 ```
 
 ### Environment window
@@ -124,6 +128,10 @@ in a new tab.
 
 You can also use `View()`function to bring up inbuilt data frame viewer
 
+```{r}
+# Use View() on variants
+```
+
 ## Summarizing and determining the structure of a data frame.
 
 -   A data frame is the standard way in R to store tabular data.
@@ -131,13 +139,16 @@ You can also use `View()`function to bring up inbuilt data frame viewer
 -   A data fame could also be thought of as a collection of vectors, all
     of which have the same length.
 
+![](images/Data_types_structure_image.jpg){width="369"}
+
 -   Using only two functions, we can learn a lot about out data frame
     including some summary statistics as well as well as the "structure"
     of the data frame.
 
-The first function we will use to explore our data.frame is summary
+The first function we will use to explore our data.frame is `summary`
 
 ```{r}
+# show help summary
 # use the summary() function on our data.frame variants
 ```
 
@@ -163,9 +174,11 @@ statistical summary:
 Many of the other variables (e.g. `sample_id`) are treated as characters
 data .
 
-For logical variables or categorical variables (for example, columns
-that contain text or discrete values), **`summary()`** will provide a
-frequency count of the levels/categories present.
+For `logical` variables or categorical variables (for example, columns
+that contain text or discrete values),
+
+**`summary()`** will provide a frequency count of the levels/categories
+present.
 
 For example the INDEL columns contains 101 `TRUE` and 700 `FALSE`
 values.
@@ -211,15 +224,19 @@ To get the CHROM column
 
 A really useful function is `skim()` from the
 [skimr](https://cran.r-project.org/web/packages/skimr/index.html)
-package. Packages are extra code libraries that extend the functionality
-of R.
+package.
+
+Packages are extra code libraries that extend the functionality of R.
+
+We will need to install this package using the function
+`install.packages()` or the Packages helper in rstudio
 
 ```{r}
 # install skimr package
 
 #load skimr library
 
-#se skim() fucntion of variants dataframe
+#use skim() function of variants dataframe
 ```
 
 ## Introducing Factors
@@ -237,8 +254,8 @@ genomics lessons.
 
 ### Exercise: Factors
 
-look at the variants data.frame and write down on the collaborative
-document which variable could be dfeined as factors.
+look at the `variants` data.frame and write down on the collaborative
+document which variable could be defined as factors.
 
 ------------------------------------------------------------------------
 
@@ -255,14 +272,19 @@ Here are a few reasons why factors are useful in R:
     functionality by internally representing categories with integers.
 
 2.  **Data Integrity**: Factors help maintain data integrity by ensuring
-    that the data can only take on a limited number of levels. This is
-    helpful when you know that a variable should only have certain
-    values.
+    that the data can only take on a limited number of levels.
+
+    1.   This is helpful when you know that a variable should only have
+        certain values.
 
 3.  **Efficient Storage**: Factors can be a more efficient way to store
     categorical data because each unique value is stored only once and
     the data itself is stored as integer references to the unique
     values.
+
+    ```{r}
+
+    ```
 
 4.  **Ordered Levels**: Factors can have ordered levels, which is useful
     for ordinal variables (where the order matters, such as "low",
@@ -270,13 +292,13 @@ Here are a few reasons why factors are useful in R:
 
 5.  **Data Analysis**: Many R functions are designed to work with
     factors and can provide informative output when given factor input.
-    For example, the **`table()`** function will produce a frequency
-    count of the factor levels, and the **`summary()`** function will do
-    the same.
 
-So, even though factors in R might seem strange at first, especially to
-those coming from other programming languages, they are a powerful tool
-for working with categorical data in R.
+6.  For example,
+
+    1.  the **`table()`** function will produce a frequency count of the
+        factor levels,
+
+    2.  and the **`summary()`** function will do the same.
 
 Let's see the value of treating some of other variables which are
 categorical in nature as factors.
@@ -299,6 +321,7 @@ There are 700 alleles (one for each row).
 We can use some of the vector indexing skills from the last episode.
 
 ```{r}
+# create a vector snp by subsetting alt_alleles in A,T,G,C
 snps <- c(alt_alleles[alt_alleles=="A"],
   alt_alleles[alt_alleles=="T"],
   alt_alleles[alt_alleles=="G"],
@@ -317,6 +340,7 @@ For example, we can try to generate a plot of this character vector as
 it is right now:
 
 ```{r}
+# try to use plot function
 plot(snps)
 ```
 
@@ -326,14 +350,16 @@ Though the `plot()` function will do its best to give us a quick plot,
 it is unable to do so here.
 
 One way to fix this it to tell R to treat the SNPs as categories (i.e. a
-`factor` vector); we will create a new object to avoid confusion using
-the `factor()` function:
+`factor` vector);
+
+We will create a new object to avoid confusion using the `factor()`
+function:
 
 ```{r}
 # convert list snps to factor factor_snps using factor()
 
 
-# use str function on column REF
+# Uuse str fuction on factor_snps
 
 ```
 
@@ -361,6 +387,12 @@ This explains the sequence of "1"s ("Factor w/ 4 levels"A","C","G","T":
 
 since"A" is the first level, and the first few items in our factor are
 all "A"s.
+
+```{r}
+# show difference in size of character snps and factor_snps
+object.size(snps)
+object.size(factor_snps)
+```
 
 We can see how many items in our vector fall into each category using
 the funciton `summary()`:
@@ -408,14 +440,16 @@ use the `decreasing =` parameter for this function if you wanted to
 change from the default of FALSE
 
 ```{r}
- sort(table(factor_snps))
+# use sort function to sort table
+
+# using decreasing option 
 ```
 
 3.  Using the `names` function gives us just the character names of the
     table sorted by frequencies:
 
 ```{r}
-names(sort(table(factor_snps)))
+# extact the names using names
 ```
 
 The `factor` function is what allows us to create a factor.
@@ -424,8 +458,28 @@ We give it the `factor_snps` object as input, and use the `levels=`
 parameter to enforce the ordering of the levels.
 
 ```{r}
+
+# names of factor sorted
+names(sort(table(factor_snps)))
+
+# assign  a variable ordered_factor_snps
+
 ordered_factor_snps<- factor(factor_snps, levels = names(sort(table(factor_snps))))
 ```
+
+1.  We create a table of `factor_snps` to get the frequency of each SNP:
+    `table(factor_snps)`
+
+2.  We sort this table: `sort(table(factor_snps))`; use the
+    `decreasing =` parameter for this function if you wanted to change
+    from the default of FALSE
+
+3.  Using the `names` function gives us just the character names of the
+    table sorted by frequencies:`names(sort(table(factor_snps)))`
+
+4.  The `factor` function is what allows us to create a factor. We give
+    it the `factor_snps` object as input, and use the `levels=`
+    parameter to enforce the ordering of the level
 
 Now we see our plot has be reordered:
 
@@ -443,8 +497,10 @@ Extra (forcats )[<https://forcats.tidyverse.org/>]
 When you have many factors with single values you can use `fct_infreq()`
 
 ```{r forcats}
+# install forcats library
 # load library forcats
-# order snps using fct_infreq and fct_rev
+
+# order factor_snps using ?fct_infreq and ?fct_rev
 ```
 
 ## Back to data frames
@@ -458,6 +514,8 @@ The subsetting notation is very similar to what we learned for
 `vectors`.
 
 The key differences is that data.frame have both rows and columns.
+
+![](images/subsetting%20data%20frames.webp)
 
 ### Select by index
 
@@ -474,6 +532,8 @@ Typically provide two values separated by commas:
 
 In cases where you are taking a continuous range of numbers use a colon
 between the numbers (`start:stop`, inclusive)
+
+![](images/sub_df_1.png)
 
 Subset the first row and column of variants data frame.
 
@@ -587,7 +647,7 @@ For example, a long list of gene names isn't usually thought of as a
 categorical variable.
 
 More importantly, some R packages you use to analyze your data may
-expect characters as input, not factors.
+expect `characters` as input, not `factors`.
 
 First, its very important to recognize that coercion happens in R all
 the time.
@@ -638,17 +698,29 @@ For example, when we try to coerce the `sample_id` column in our data
 frame into a numeric mode look at the result:
 
 ```{r}
-# make the 'REF' column a character type column
+# assign sample_id column in variants df as a factor
 
-variants$REF <- as.character(variants$REF)
+#  check the type of the column uysingbtypeof
 
-# check the type of the column
-typeof(variants$REF)
+# now coerce the sample_id column in our data frame into a numeric mode 
+
 ```
 
-\
+Strangely, it works!
 
-### Summary on coercion
+Almost. Instead of giving an error message, R returns numeric values,
+which in this case are the integers assigned to the levels in this
+factor.
+
+This kind of behavior can lead to hard-to-find bugs, for example when we
+do have numbers in a factor, and we get numbers from a coercion. If we
+don't look carefully, we may not notice a problem.
+
+If you need to coerce an entire column you can overwrite it using an
+expression like this one:
+
+\
+Summary on coercion
 
 Lets summarize this section on coercion with a few take home messages.
 
@@ -670,7 +742,7 @@ Lets summarize this section on coercion with a few take home messages.
 Here are a few operations that don't need much explanation, but which
 are good to know.
 
-You can use functions like
+You can use R functions like
 
 `mean()` `min()` `max()`
 
@@ -756,7 +828,9 @@ and choose **From Excel**
 Let's check the first few lines of the `Ecoli_metadata` data frame:
 
 ```{r}
-# view the first six lines of Ecoli_metadata
+# download file
+download.file(url = "https://figshare.com/ndownloader/files/39515053",destfile = "rawdata/Ecoli_metadata.xlsx")
+# view the first six lines of Ecoli_metadata?
 ```
 
 The type of this object is 'tibble', a type of data frame we will talk
