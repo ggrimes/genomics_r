@@ -7,15 +7,32 @@ editor_options:
     wrap: 72
 ---
 
+# **Data Visualization with ggplot2**
+
+<https://datacarpentry.org/genomics-r-intro/06-data-visualization.html>
+
 In this final lesson you will use the R package ggplot2 to visualize
 your data.
 
-We start by loading the package ggplot2.
+We start by loading the package ggplot2. either on it's own or via
+[tidyverse](https://www.tidyverse.org/packages/)
 
 ```{r load_ggplot2}
 # install ggplot2
 # load library ggplot2
 
+```
+
+## **Loading the dataset**
+
+We will read in variants dataset using `read_csv()` function
+
+```{r}
+# load variants dataset using read_csv from readr package
+variants = read_csv("https://raw.githubusercontent.com/naupaka/vcfr-for-data-carpentry-draft/main/output/combined_tidy_vcf.csv")
+
+glimpse(variants) 
+# Show a snapshot of the rows and columns
 ```
 
 ## Plotting with ggplot2
@@ -38,7 +55,7 @@ ggplot2 functions like data in the '`long`' format,
 
 -   A row for every observation.
 
-    ![](images/longwide.png)
+    ![](images/longwide.png){width="524"}
 
 Well-structured data will save you lots of time when making figures with
 ggplot2
@@ -55,10 +72,20 @@ used for different types of plots:
 
     ggplot(data = <DATA>, mapping = aes(<MAPPINGS>)) +  <GEOM_FUNCTION>()
 
-![](images/ggplot2_simplified.webp)
+![](images/ggplot2_simplified.webp){width="385"}
 
-use the `ggplot()` function and bind the plot to a specific data frame
-using the data argument
+To build a ggplot, we will use the following basic template that can be
+used for different types of plots:
+
+```{r}
+# initizalie ggplot with variants dataframe
+# use the ggplot() function and bind the plot to a specific data frame using the data argument
+```
+
+-   define a mapping (using the aesthetic (`aes`) function), by
+    selecting the variables to be plotted and specifying how to present
+    them in the graph, e.g. as x and y positions or characteristics such
+    as size, shape, color, etc.
 
 ```{r ggplot_01}
 #use the ggplot() function and bind the variants data's POS to x axis and DP to y axis 
@@ -92,7 +119,7 @@ Because we have two continuous variables `POS` and `DP`, we will use
 to create a scatterplot:
 
 ```{r ggplot_add_geom}
-# add geom _point to previous code
+# add geom _point() to previous code
 ggplot(data = variants, aes(x = POS, y = DP)) 
 ```
 
@@ -107,11 +134,44 @@ so the above plot can also be generated with code like this:
 ```{r}
 # Assign plot to a object coverage_plot
 # ggplot(data = variants, aes(x = POS, y = DP))
-ggplot(data = variants, aes(x = POS, y = DP))
 
-# Draw the plot coverage_plot using geom_point
+
+# Draw the plot coverage_plot using geom_point()
 
 ```
+
+**Notes**
+
+-   Anything you put in the
+    [`ggplot()`](https://ggplot2.tidyverse.org/reference/ggplot.html)
+    function can be seen by any geom layers that you add (i.e., these
+    are universal plot settings). This includes the x- and y-axis
+    mapping you set up in
+    [`aes()`](https://ggplot2.tidyverse.org/reference/aes.html).
+
+-   You can also specify mappings for a given geom independently of the
+    mappings defined globally in the
+    [`ggplot()`](https://ggplot2.tidyverse.org/reference/ggplot.html)
+    function.
+
+-   The `+` sign used to add new layers must be placed at the end of the
+    line containing the *previous* layer.
+
+    -   If, instead, the `+` sign is added at the beginning of the line
+        containing the new layer, **`ggplot2`** will not add the new
+        layer and will return an error message.
+
+```{r}
+# This is the correct syntax for adding layers
+coverage_plot +
+  geom_point()
+
+# This will not add the new layer and will return an error message
+coverage_plot
+  + geom_point()
+```
+
+\
 
 ## Building your plots iteratively
 
@@ -156,7 +216,8 @@ our ggplot2 object.
 We can either map some variables to one of the remaining **Aesthetics**
 or provide a single value.
 
-For instance, we can add transparency (`alpha`) to avoid over plotting:
+For instance, we can add transparency (`alpha`) values from 0-1 to avoid
+over plotting:
 
 ```{r ggplot_int_02}
 # can add transparency (alpha) to avoid over plotting:
@@ -206,10 +267,10 @@ y = "Read Depth (DP)"
 ```
 
 To add a main title "Read Depth vs. Position" to the plot, we use
-`labs()`parameter `title`
+`ggtitle()`
 
 ```{r}
-# add main title using labs parameter title "Read Depth vs. Position
+# add main title using ggtitle "Read Depth vs. Position
 ggplot(data = variants, aes(x = POS, y = DP, color = sample_id)) +
   geom_point(alpha = 0.5) +
   labs(x = "Base Pair Position",
@@ -220,7 +281,7 @@ ggplot(data = variants, aes(x = POS, y = DP, color = sample_id)) +
 
 Now the figure is complete and ready to be exported and saved to a file.
 
-This can be achieved easily using the fuction
+This can be achieved easily using the function
 [`ggsave()`](https://ggplot2.tidyverse.org/reference/ggsave.html),
 
 `ggsave` can write, by default, the most recent generated figure into
@@ -228,7 +289,7 @@ different formats (e.g., `jpeg`, `png`, `pdf`) according to the file
 extension you give.
 
 So, for example, to create a pdf version of the above figure with a
-dimension of \$6\\times4\$ inches:
+dimension of 6 by 4 inches:
 
 ```{r}
 # create a folder results using dir.create
@@ -238,15 +299,21 @@ dir.create("results")
 
 ```
 
+------------------------------------------------------------------------
+
 ## **Exercise: scatterplots**
 
-Use what you just learned to create a ggplot scatter plot (geom_point)
-of y PHRED scaled quality (`QUAL`) over x position (`POS`) with the
-`sample_id` showing in different colors.
+Use what you just learned to create a scatter plot of mapping quality
+(`MQ`) over position (`POS`) with the samples showing in different
+colors.
 
-```{r}
+Make sure to give your plot relevant axis labels.
+
+```{r exercise_answer}
 
 ```
+
+------------------------------------------------------------------------
 
 ## Faceting
 
@@ -280,7 +347,7 @@ A period `.` can be used as a placeholder that indicates only one `row`
 or `column`).
 
 ```{r ggplot_it_facet_02}
-# chnage to facet by row
+# change to facet by row
 ggplot(data = variants, aes(x = POS, y = MQ, color = sample_id)) + 
  geom_point() + 
  labs(x = "Base Pair Position", 
@@ -288,18 +355,46 @@ ggplot(data = variants, aes(x = POS, y = MQ, color = sample_id)) +
  facet_grid(.~sample_id)
 ```
 
+### Themes
+
+Usually plots with white background look more readable when printed.
+
+We can set the background to white using the function
+[`theme_bw()`](https://ggplot2.tidyverse.org/reference/ggtheme.html).
+
+Additionally, you can remove the grid:
+
+```{r}
+# add theme_bw()
+#  theme(panel.grid = element_blank()) 
+
+ggplot(data = variants, aes(x = POS, y = MQ, color = sample_id)) +
+  geom_point() +
+  labs(x = "Base Pair Position",
+       y = "Mapping Quality (MQ)") +
+  facet_grid(sample_id ~ .) +
+
+```
+
+------------------------------------------------------------------------
+
 ## **Exercise**
+
+Use what you just learned to create a scatter plot of PHRED scaled
+quality (`QUAL`) over position (`POS`) with the samples showing in
+different colors.
+
+Make sure to give your plot relevant axis labels.
 
 Alter the plot from the previous exercise by faceting by rows.
 
 Make sure to give your plot relevant axis labels.
 
 ```{r}
- ggplot(data = variants, aes(x = POS, y = QUAL, color = sample_id)) +
-  geom_point() +
-  labs(x = "Base Pair Position",
-       y = "PHRED-sacled Quality (QUAL)") 
+
 ```
+
+------------------------------------------------------------------------
 
 # Barplots
 
@@ -320,12 +415,14 @@ If you wish to flip the orientation use `y`
 Let's make a `barplot` showing the number of INDELs (`INDEL`) .
 
 ```{r ggplot_geom_bar}
-# make a bar plot using geom_bar
+# make a bar plot using geom_bar wiht counts of INDEL using x 
 
 
 ```
 
 We can map another variable to the data using the aes `fill` ,
+
+Notes `fill` and `color` are different aes
 
 for example to create a stacked bar chart using sample_id
 
@@ -355,7 +452,7 @@ the dataset.
 Let's plot the distribution of variant depth `DP`
 
 ```{r}
-# Using the geom_density geom that shows the distribution of of a depth DP in variants data frame.
+# Using the geom_density geom that shows the distribution of of a depth DP as x in variants data frame.
 
 
 
@@ -388,6 +485,29 @@ ggplot(data = variants, aes(x = POS, y = MQ, color = sample_id)) +
        y = "Mapping Quality (MQ)") + 
   facet_grid(sample_id ~ .) 
 ```
+
+Here is a link to elements you can change
+<https://isabella-b.com/blog/ggplot2-theme-elements-reference/>
+
+------------------------------------------------------------------------
+
+### EXERCISE
+
+With all of this information in hand, please take another five minutes
+to either improve one of the plots generated in this exercise or create
+a beautiful graph of your own. Use the RStudio [**`ggplot2`** cheat
+sheet](https://raw.githubusercontent.com/rstudio/cheatsheets/main/data-visualization.pdf)
+for inspiration. Here are some ideas:
+
+-   See if you can change the size or shape of the plotting symbol.
+
+-   Can you find a way to change the name of the legend? What about its
+    labels?
+
+-   Try using a different color palette (see the [Cookbook for
+    R](https://www.cookbook-r.com/Graphs/Colors_(ggplot2)/).
+
+------------------------------------------------------------------------
 
 ## **More `ggplot2`** Plots
 
